@@ -28,6 +28,8 @@ const eslintConfig = [
           caughtErrorsIgnorePattern: '^(_|ignore)',
         },
       ],
+      '@next/next/no-css-tags': 'off',
+      '@next/next/no-inline-styles': 'off',
     },
   },
   {

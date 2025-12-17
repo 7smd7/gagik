@@ -1,0 +1,27 @@
+@layer components {
+  .hero-section {
+    @apply relative w-full h-screen flex items-center justify-center text-center text-white;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .hero-overlay {
+    @apply absolute inset-0 bg-black/40;
+  }
+
+  .hero-content {
+    @apply relative z-10 max-w-4xl mx-auto px-4;
+  }
+
+  .hero-heading {
+    @apply text-5xl md:text-6xl font-bold mb-6;
+  }
+
+  .hero-text {
+    @apply text-lg md:text-xl mb-8 max-w-2xl mx-auto;
+  }
+
+  .hero-cta {
+    @apply inline-block bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition;
+  }
+}
