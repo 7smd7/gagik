@@ -3,8 +3,10 @@ import { withPayload } from '@payloadcms/next/withPayload'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Your Next.js config here
-  serverActions: {
-    bodySizeLimit: '10mb',
+  experimental: {
+    serverActions: {
+      bodySizeLimit: 52428800,
+    },
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {

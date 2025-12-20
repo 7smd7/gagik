@@ -1,10 +1,11 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
-import type { Page, Work } from '@/payload-types'
+import type { Page, Work, Series } from '@/payload-types'
 import Hero from '@/components/hero/HomeHero'
 import Biography from '@/components/biography/Biography'
 import WorksGallery from '@/components/works/WorksGallery'
+import SeriesGallery from '@/components/series/SeriesGallery'
 
 export default async function PageComponent() {
   const payload = await getPayload({ config: configPromise })
@@ -26,6 +27,14 @@ export default async function PageComponent() {
   })
 
   const works = worksResult.docs as Work[]
+
+  // Fetch series
+  const seriesResult = await payload.find({
+    collection: 'series',
+    limit: 100,
+  })
+
+  const series = seriesResult.docs as Series[]
 
   if (!pages.docs.length) {
     notFound()
@@ -66,6 +75,9 @@ export default async function PageComponent() {
 
       {/* Works Gallery Section */}
       {works.length > 0 && <WorksGallery works={works} />}
+
+      {/* Series Gallery Section */}
+      {series.length > 0 && <SeriesGallery series={series} />}
     </div>
   )
 }

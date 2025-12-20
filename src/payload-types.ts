@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     pages: Page;
     works: Work;
+    series: Series;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     works: WorksSelect<false> | WorksSelect<true>;
+    series: SeriesSelect<false> | SeriesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -297,6 +299,58 @@ export interface Work {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "series".
+ */
+export interface Series {
+  id: number;
+  /**
+   * Name of the photography series (e.g., "Street Photography of Yerevan")
+   */
+  name: string;
+  /**
+   * Cover image for the series
+   */
+  cover: number | Media;
+  /**
+   * When the series started
+   */
+  startDate?: string | null;
+  /**
+   * When the series ended
+   */
+  endDate?: string | null;
+  /**
+   * Images in this series
+   */
+  images: {
+    image: number | Media;
+    /**
+     * Title of the photograph
+     */
+    title?: string | null;
+    /**
+     * Description of the photograph
+     */
+    description?: string | null;
+    /**
+     * Date the photograph was taken
+     */
+    date?: string | null;
+    /**
+     * Where the photograph was taken
+     */
+    location?: string | null;
+    /**
+     * Archive or reference number
+     */
+    archiveNumber?: string | null;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -334,6 +388,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'works';
         value: number | Work;
+      } | null)
+    | ({
+        relationTo: 'series';
+        value: number | Series;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -475,6 +533,29 @@ export interface WorksSelect<T extends boolean = true> {
   artist?: T;
   order?: T;
   featured?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "series_select".
+ */
+export interface SeriesSelect<T extends boolean = true> {
+  name?: T;
+  cover?: T;
+  startDate?: T;
+  endDate?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        title?: T;
+        description?: T;
+        date?: T;
+        location?: T;
+        archiveNumber?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

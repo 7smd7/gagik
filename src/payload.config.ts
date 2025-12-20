@@ -9,6 +9,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Works } from './collections/Works'
+import { Series } from './collections/Series'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 
@@ -22,7 +23,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Pages, Works],
+  collections: [Users, Media, Pages, Works, Series],
   globals: [Header, Footer],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
