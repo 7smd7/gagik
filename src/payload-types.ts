@@ -181,31 +181,82 @@ export interface Page {
    */
   slug: string;
   layout?:
-    | {
-        /**
-         * Main hero title (e.g., "GAGIK HARUTYUNYAN")
-         */
-        heading?: string | null;
-        /**
-         * Optional subtitle displayed below the title (e.g., "Yerevan")
-         */
-        subtitle?: string | null;
-        /**
-         * Hero background image (grayscale effect applied)
-         */
-        background?: (number | null) | Media;
-        /**
-         * Optional call-to-action button label
-         */
-        ctaLabel?: string | null;
-        /**
-         * Optional call-to-action button URL
-         */
-        ctaLink?: string | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'hero';
-      }[]
+    | (
+        | {
+            /**
+             * Main hero title (e.g., "GAGIK HARUTYUNYAN")
+             */
+            heading?: string | null;
+            /**
+             * Optional subtitle displayed below the title (e.g., "Yerevan")
+             */
+            subtitle?: string | null;
+            /**
+             * Hero background image (grayscale effect applied)
+             */
+            background?: (number | null) | Media;
+            /**
+             * Optional call-to-action button label
+             */
+            ctaLabel?: string | null;
+            /**
+             * Optional call-to-action button URL
+             */
+            ctaLink?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            /**
+             * Main biography text - use rich text editor for formatting
+             */
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            /**
+             * Images to display alongside biography
+             */
+            images?:
+              | {
+                  image: number | Media;
+                  /**
+                   * Photo credit or copyright information
+                   */
+                  caption?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Files available for download (PDFs, documents, etc.)
+             */
+            files?:
+              | {
+                  file: number | Media;
+                  /**
+                   * Text to display for the download link
+                   */
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'biography';
+          }
+      )[]
     | null;
   updatedAt: string;
   createdAt: string;
@@ -387,6 +438,27 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        biography?:
+          | T
+          | {
+              content?: T;
+              images?:
+                | T
+                | {
+                    image?: T;
+                    caption?: T;
+                    id?: T;
+                  };
+              files?:
+                | T
+                | {
+                    file?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
@@ -452,7 +524,8 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: number;
-  logo: number | Media;
+  name: string;
+  logo?: (number | null) | Media;
   navItems?:
     | {
         label: string;
@@ -485,6 +558,7 @@ export interface Footer {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  name?: T;
   logo?: T;
   navItems?:
     | T

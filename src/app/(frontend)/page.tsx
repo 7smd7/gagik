@@ -3,7 +3,7 @@ import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
 import type { Page, Work } from '@/payload-types'
 import Hero from '@/components/hero/HomeHero'
-import Biography from '@/components/home/Biography'
+import Biography from '@/components/biography/Biography'
 import WorksGallery from '@/components/works/WorksGallery'
 
 export default async function PageComponent() {
@@ -33,6 +33,9 @@ export default async function PageComponent() {
 
   const page = pages.docs[0] as Page
 
+  // Extract biography block from layout
+  const biographyBlock = page.layout?.find((block) => block.blockType === 'biography')
+
   return (
     <div className="bg-black">
       {/* Hero Section */}
@@ -52,11 +55,17 @@ export default async function PageComponent() {
         return null
       })}
 
+      {/* Biography Section */}
+      {biographyBlock && (
+        <Biography
+          content={biographyBlock.content}
+          images={biographyBlock.images}
+          files={biographyBlock.files}
+        />
+      )}
+
       {/* Works Gallery Section */}
       {works.length > 0 && <WorksGallery works={works} />}
-
-      {/* Biography Section - Slides over hero */}
-      <Biography />
     </div>
   )
 }

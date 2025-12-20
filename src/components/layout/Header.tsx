@@ -13,5 +13,5 @@ export default async function Header() {
     link: item.link || '#',
   }))
 
-  return <HeaderClient navItems={navItems} />
+  return <HeaderClient logo={header?.logo} name={header?.name} navItems={navItems} />
 }

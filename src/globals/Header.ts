@@ -5,10 +5,16 @@ export const Header: GlobalConfig = {
   label: 'Header',
   fields: [
     {
+      name: 'name',
+      type: 'text',
+      required: true,
+      defaultValue: 'Gagik Harutyunyan',
+    },
+    {
       name: 'logo',
       type: 'upload',
       relationTo: 'media',
-      required: true,
+      required: false,
     },
     {
       name: 'navItems',

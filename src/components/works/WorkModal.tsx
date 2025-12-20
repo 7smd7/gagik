@@ -67,12 +67,32 @@ export default function WorkModal({ work, onClose, onPrevious, onNext }: WorkMod
         </button>
 
         {/* Content Container */}
-        <div className="h-full flex items-center">
+        <div
+          className="h-full w-full overflow-y-auto flex items-center py-16 md:py-0"
+          onTouchStart={(e) => {
+            const touch = e.touches[0]
+            ;(e.currentTarget as any).startX = touch.clientX
+          }}
+          onTouchEnd={(e) => {
+            const touch = e.changedTouches[0]
+            const startX = (e.currentTarget as any).startX
+            const endX = touch.clientX
+            const diff = startX - endX
+
+            if (Math.abs(diff) > 50) {
+              if (diff > 0 && onNext) {
+                onNext()
+              } else if (diff < 0 && onPrevious) {
+                onPrevious()
+              }
+            }
+          }}
+        >
           {/* Left Arrow */}
           {onPrevious && (
             <button
               onClick={onPrevious}
-              className="absolute left-8 top-1/2 -translate-y-1/2 z-50 p-2 text-black/40 hover:text-black transition-colors"
+              className="hidden md:block absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-50 p-2 text-black/40 hover:text-black transition-colors"
               aria-label="Previous work"
             >
               <svg
@@ -95,7 +115,7 @@ export default function WorkModal({ work, onClose, onPrevious, onNext }: WorkMod
           {onNext && (
             <button
               onClick={onNext}
-              className="absolute right-8 top-1/2 -translate-y-1/2 z-50 p-2 text-black/40 hover:text-black transition-colors"
+              className="hidden md:block absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-50 p-2 text-black/40 hover:text-black transition-colors"
               aria-label="Next work"
             >
               <svg
@@ -115,61 +135,114 @@ export default function WorkModal({ work, onClose, onPrevious, onNext }: WorkMod
           )}
 
           {/* Main Content */}
-          <div className="w-full max-w-7xl mx-auto px-16 md:px-24 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-            {/* Left Side - Info */}
-            <motion.div
-              key={`info-${work.id}`}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-              className="order-2 lg:order-1 space-y-8"
-            >
-              {/* Artist */}
-              <div>
-                <h2 className="text-2xl md:text-3xl font-display uppercase tracking-wide text-black">
-                  {work.artist || 'Gagik Harutyunyan'}
-                </h2>
-                <p className="text-xs font-sans uppercase tracking-[0.2em] text-black/50 mt-1">
-                  Armenia
-                </p>
-              </div>
+          <div className="w-full flex justify-center items-center px-6 md:px-8 lg:px-24">
+            <div className="w-full max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+              {/* Left Side - Info */}
+              <motion.div
+                key={`info-${work.id}`}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="order-2 lg:order-1 space-y-4 md:space-y-6 px-4 md:px-8 lg:px-12 text-center lg:text-left"
+              >
+                {/* Artist */}
+                <div>
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-display uppercase tracking-wide text-black">
+                    {work.artist || 'Gagik Harutyunyan'}
+                  </h2>
+                </div>
 
-              {/* Title & Year */}
-              <div className="space-y-4">
-                <h3 className="text-sm md:text-base font-sans uppercase tracking-[0.15em] text-black/80">
-                  {work.title}
-                  {work.place ? `, ${work.place}` : ''}
-                  {work.year ? `, ${work.year}` : ''}
-                </h3>
-              </div>
+                {/* Title & Year */}
+                <div className="space-y-1.5 md:space-y-2">
+                  {work.title && (
+                    <h3 className="text-sm md:text-base lg:text-lg font-sans italic text-black/80">
+                      {work.title}
+                    </h3>
+                  )}
+                  {work.place && (
+                    <div className="text-xs md:text-sm font-sans uppercase tracking-[0.15em] text-black/50">
+                      {work.place}
+                    </div>
+                  )}
+                  {work.year && (
+                    <div className="text-xs md:text-sm font-sans text-black/40">{work.year}</div>
+                  )}
+                </div>
+              </motion.div>
 
-              {/* Enquire Button */}
-              <div className="pt-4">
-                <button className="text-xs font-sans uppercase tracking-[0.2em] text-black/50 hover:text-black transition-colors border-b border-black/20 hover:border-black pb-1">
-                  Enquire
-                </button>
-              </div>
-            </motion.div>
+              {/* Right Side - Image */}
+              <motion.div
+                key={`image-${work.id}`}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+                className="order-1 lg:order-2 relative w-full flex items-center justify-center"
+              >
+                {imageUrl && (
+                  <div className="relative w-full aspect-3/4 sm:aspect-4/5 lg:aspect-2/3 max-h-[75vh] lg:max-h-[85vh]">
+                    <Image
+                      src={imageUrl}
+                      alt={work.title}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 50vw"
+                      priority
+                    />
+                  </div>
+                )}
+              </motion.div>
+            </div>
+          </div>
 
-            {/* Right Side - Image */}
-            <motion.div
-              key={`image-${work.id}`}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
-              className="order-1 lg:order-2 relative aspect-[3/4] max-h-[75vh] w-full"
-            >
-              {imageUrl && (
-                <Image
-                  src={imageUrl}
-                  alt={work.title}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                />
-              )}
-            </motion.div>
+          {/* Mobile Navigation */}
+          <div className="md:hidden fixed bottom-6 left-0 right-0 flex justify-center gap-4 lg:gap-8 z-50">
+            {onPrevious && (
+              <button
+                onClick={onPrevious}
+                className="p-3 bg-white/90 backdrop-blur rounded-full shadow-lg text-black/60 hover:text-black transition-colors"
+                aria-label="Previous work"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+            )}
+            <div className="flex flex-col items-center justify-center gap-2">
+              <div className="text-xs md:text-sm font-sans text-black/40 uppercase tracking-wider">
+                Swipe to navigate
+              </div>
+            </div>
+            {onNext && (
+              <button
+                onClick={onNext}
+                className="p-3 bg-white/90 backdrop-blur rounded-full shadow-lg text-black/60 hover:text-black transition-colors"
+                aria-label="Next work"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       </motion.div>

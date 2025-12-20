@@ -63,16 +63,16 @@ export default function Hero({ heading, subtitle, background }: HeroProps) {
           style={{ y: textY, opacity: textOpacity, scale: textScale }}
         >
           <motion.h1
-            className="font-display text-[13vw] md:text-[13vw] leading-[0.85] font-bold uppercase text-white tracking-tight"
+            className="font-display text-[13vw] md:text-[13vw] leading-[1.1] font-bold uppercase text-white tracking-tight"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
           >
             {heading || (
               <>
-                GAGIK
+                Artistry
                 <br />
-                HARUTYUNYAN
+                Unleashed
               </>
             )}
           </motion.h1>

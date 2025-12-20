@@ -76,6 +76,73 @@ export const Pages: CollectionConfig = {
             },
           ],
         },
+        {
+          slug: 'biography',
+          labels: {
+            singular: 'Biography',
+            plural: 'Biographies',
+          },
+          fields: [
+            {
+              name: 'content',
+              type: 'richText',
+              label: 'Biography Content',
+              admin: {
+                description: 'Main biography text - use rich text editor for formatting',
+              },
+              required: true,
+            },
+            {
+              name: 'images',
+              type: 'array',
+              label: 'Images',
+              admin: {
+                description: 'Images to display alongside biography',
+              },
+              fields: [
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  required: true,
+                },
+                {
+                  name: 'caption',
+                  type: 'text',
+                  label: 'Photo Credit',
+                  admin: {
+                    description: 'Photo credit or copyright information',
+                  },
+                },
+              ],
+            },
+            {
+              name: 'files',
+              type: 'array',
+              label: 'Downloads',
+              admin: {
+                description: 'Files available for download (PDFs, documents, etc.)',
+              },
+              fields: [
+                {
+                  name: 'file',
+                  type: 'upload',
+                  relationTo: 'media',
+                  required: true,
+                },
+                {
+                  name: 'label',
+                  type: 'text',
+                  label: 'Download Label',
+                  admin: {
+                    description: 'Text to display for the download link',
+                  },
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],
