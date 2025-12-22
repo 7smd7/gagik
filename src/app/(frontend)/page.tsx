@@ -7,6 +7,7 @@ import Biography from '@/components/biography/Biography'
 import WorksGallery from '@/components/works/WorksGallery'
 import SeriesGallery from '@/components/series/SeriesGallery'
 import PressGallery from '@/components/press/PressGallery'
+import ScrollSpacer from '@/components/layout/ScrollSpacer'
 
 export default async function PageComponent() {
   const payload = await getPayload({ config: configPromise })
@@ -82,11 +83,17 @@ export default async function PageComponent() {
         />
       )}
 
+      <ScrollSpacer />
+
       {/* Works Gallery Section */}
       {works.length > 0 && <WorksGallery works={works} />}
 
+      <ScrollSpacer />
+
       {/* Series Gallery Section */}
       {series.length > 0 && <SeriesGallery series={series} />}
+
+      <ScrollSpacer />
 
       {/* Press Section */}
       {press.length > 0 && <PressGallery press={press} />}
