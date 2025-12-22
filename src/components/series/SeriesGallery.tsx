@@ -30,7 +30,7 @@ function SeriesCard({ series, onClick }: { series: SeriesType; onClick: () => vo
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="flex-shrink-0 w-56 h-56 md:w-64 md:h-64 group cursor-pointer relative overflow-hidden bg-neutral-50 rounded-sm"
+      className="shrink-0 w-56 h-56 md:w-64 md:h-64 group cursor-pointer relative overflow-hidden bg-neutral-50 rounded-sm"
       onClick={onClick}
     >
       {/* Image */}
@@ -39,38 +39,17 @@ function SeriesCard({ series, onClick }: { series: SeriesType; onClick: () => vo
           src={coverUrl}
           alt={series.name}
           fill
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition duration-500 group-hover:scale-105 group-hover:brightness-40"
           sizes="(max-width: 768px) 224px, 256px"
         />
       )}
 
-      {/* Hover Overlay */}
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4 md:p-5" />
-
-      {/* Hover Details */}
-      <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        {/* Series Name */}
-        <div className="mb-2">
-          <h3 className="text-sm md:text-base font-sans font-semibold text-white line-clamp-2">
-            {series.name}
-          </h3>
-        </div>
-
-        {/* Details */}
-        <div className="space-y-1 text-xs md:text-sm text-white/90">
-          {dateRange && <div className="font-sans">{dateRange}</div>}
-          <div className="font-sans">
-            {imageCount} {imageCount === 1 ? 'photo' : 'photos'}
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile - Always visible details at bottom */}
-      <div className="absolute inset-0 md:hidden flex flex-col justify-end p-4 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
-        <h3 className="text-sm font-sans font-semibold text-white line-clamp-2 mb-1">
+      {/* Details (always visible) */}
+      <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-5 bg-linear-to-t from-black/60 via-black/20 to-transparent">
+        <h3 className="text-sm md:text-base font-sans font-semibold text-white line-clamp-2 mb-1">
           {series.name}
         </h3>
-        <div className="space-y-0.5 text-xs text-white/90">
+        <div className="space-y-0.5 text-xs md:text-sm text-white/90">
           {dateRange && <div className="font-sans">{dateRange}</div>}
           <div className="font-sans">
             {imageCount} {imageCount === 1 ? 'photo' : 'photos'}
@@ -87,6 +66,8 @@ export default function SeriesGallery({ series }: SeriesGalleryProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
   const titleInView = useInView(sectionRef, { once: true, margin: '-100px' })
+  const [showLeftFade, setShowLeftFade] = useState(false)
+  const [showRightFade, setShowRightFade] = useState(false)
 
   // Lazy loading - load initial batch and more on scroll
   useEffect(() => {
@@ -99,6 +80,13 @@ export default function SeriesGallery({ series }: SeriesGalleryProps) {
 
     const { scrollLeft, scrollWidth, clientWidth } = container
     const scrollPercentage = (scrollLeft + clientWidth) / scrollWidth
+
+    const atStart = scrollLeft <= 10
+    const atEnd = scrollLeft + clientWidth >= scrollWidth - 10
+
+    // Show/hide fades depending on scroll position and whether scroll is necessary
+    setShowLeftFade(!atStart && scrollWidth > clientWidth)
+    setShowRightFade(!atEnd && scrollWidth > clientWidth)
 
     // Load more when reaching 80% of the end
     if (scrollPercentage > 0.8 && visibleSeries.length < series.length) {
@@ -113,6 +101,11 @@ export default function SeriesGallery({ series }: SeriesGalleryProps) {
     container.addEventListener('scroll', handleScroll)
     return () => container.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
+
+  // Initialize fades when content changes or on mount
+  useEffect(() => {
+    handleScroll()
+  }, [handleScroll, visibleSeries.length])
 
   const openModal = (index: number) => {
     setSelectedIndex(index)
@@ -168,8 +161,13 @@ export default function SeriesGallery({ series }: SeriesGalleryProps) {
               ))}
             </div>
 
-            {/* Fade effect on right side */}
-            <div className="absolute top-0 right-0 w-12 md:w-24 h-full bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none" />
+            {/* Fade effects */}
+            <div
+              className={`absolute top-0 left-0 w-12 md:w-24 h-full bg-linear-to-r from-white via-white/80 to-transparent pointer-events-none transition-opacity duration-300 ${showLeftFade ? 'opacity-100' : 'opacity-0'}`}
+            />
+            <div
+              className={`absolute top-0 right-0 w-12 md:w-24 h-full bg-linear-to-l from-white via-white/80 to-transparent pointer-events-none transition-opacity duration-300 ${showRightFade ? 'opacity-100' : 'opacity-0'}`}
+            />
           </div>
 
           {/* Load more indicator */}

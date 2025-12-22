@@ -52,7 +52,7 @@ export default function Hero({ heading, subtitle, background }: HeroProps) {
             className="object-cover grayscale"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black" />
+          <div className="absolute inset-0 bg-linear-to-br from-gray-900 to-black" />
         )}
       </motion.div>
 
@@ -103,7 +103,7 @@ export default function Hero({ heading, subtitle, background }: HeroProps) {
             Scroll
           </span>
           <motion.div
-            className="w-[1px] h-16 bg-white/30 relative overflow-hidden"
+            className="w-px h-16 bg-white/30 relative overflow-hidden"
             initial={{ scaleY: 0 }}
             animate={{ scaleY: 1 }}
             transition={{ delay: 1.8, duration: 0.6 }}

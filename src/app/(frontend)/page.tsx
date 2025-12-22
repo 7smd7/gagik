@@ -1,11 +1,12 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
-import type { Page, Work, Series } from '@/payload-types'
+import type { Page, Work, Series, Press } from '@/payload-types'
 import Hero from '@/components/hero/HomeHero'
 import Biography from '@/components/biography/Biography'
 import WorksGallery from '@/components/works/WorksGallery'
 import SeriesGallery from '@/components/series/SeriesGallery'
+import PressGallery from '@/components/press/PressGallery'
 
 export default async function PageComponent() {
   const payload = await getPayload({ config: configPromise })
@@ -35,6 +36,14 @@ export default async function PageComponent() {
   })
 
   const series = seriesResult.docs as Series[]
+
+  // Fetch press
+  const pressResult = await payload.find({
+    collection: 'press',
+    limit: 100,
+  })
+
+  const press = pressResult.docs as Press[]
 
   if (!pages.docs.length) {
     notFound()
@@ -78,6 +87,9 @@ export default async function PageComponent() {
 
       {/* Series Gallery Section */}
       {series.length > 0 && <SeriesGallery series={series} />}
+
+      {/* Press Section */}
+      {press.length > 0 && <PressGallery press={press} />}
     </div>
   )
 }

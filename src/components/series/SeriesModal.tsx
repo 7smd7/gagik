@@ -200,7 +200,7 @@ export default function SeriesModal({ series, onClose }: SeriesModalProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="shrink-0 h-auto max-h-70 bg-gradient-to-t from-white via-white/98 to-white/95 pt-4 pb-6 md:pb-8 px-4 md:px-8 overflow-y-auto border-t border-black/5"
+            className="shrink-0 h-auto max-h-70 bg-linear-to-t from-white via-white/98 to-white/95 pt-4 pb-6 md:pb-8 px-4 md:px-8 overflow-y-auto border-t border-black/5"
           >
             {/* Image Info - All on one line with separators */}
             <div className="text-center mb-4 md:mb-6">

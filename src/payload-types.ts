@@ -72,6 +72,7 @@ export interface Config {
     pages: Page;
     works: Work;
     series: Series;
+    press: Press;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +85,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     works: WorksSelect<false> | WorksSelect<true>;
     series: SeriesSelect<false> | SeriesSelect<true>;
+    press: PressSelect<false> | PressSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -351,6 +353,39 @@ export interface Series {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "press".
+ */
+export interface Press {
+  id: number;
+  /**
+   * Title of the press article
+   */
+  title: string;
+  /**
+   * Writer or author name
+   */
+  author?: string | null;
+  /**
+   * Publication name (e.g., "The New York Times", "The Times")
+   */
+  publisher?: string | null;
+  /**
+   * Date of publication
+   */
+  date?: string | null;
+  /**
+   * Upload PDF of the press article
+   */
+  file?: (number | null) | Media;
+  /**
+   * Link to the press article page
+   */
+  url?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -392,6 +427,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'series';
         value: number | Series;
+      } | null)
+    | ({
+        relationTo: 'press';
+        value: number | Press;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -556,6 +595,20 @@ export interface SeriesSelect<T extends boolean = true> {
         archiveNumber?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "press_select".
+ */
+export interface PressSelect<T extends boolean = true> {
+  title?: T;
+  author?: T;
+  publisher?: T;
+  date?: T;
+  file?: T;
+  url?: T;
   updatedAt?: T;
   createdAt?: T;
 }
