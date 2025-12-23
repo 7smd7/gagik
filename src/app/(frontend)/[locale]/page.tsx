@@ -9,8 +9,17 @@ import SeriesGallery from '@/components/series/SeriesGallery'
 import PressGallery from '@/components/press/PressGallery'
 import ScrollSpacer from '@/components/layout/ScrollSpacer'
 
-export default async function PageComponent() {
+interface PageProps {
+  params: Promise<{
+    locale: string
+  }>
+}
+
+export default async function PageComponent({ params }: PageProps) {
+  const { locale } = await params
   const payload = await getPayload({ config: configPromise })
+
+  const localeCode = locale as 'en' | 'hy' | 'ru'
 
   const pages = await payload.find({
     collection: 'pages',
@@ -19,6 +28,7 @@ export default async function PageComponent() {
         equals: 'home',
       },
     },
+    locale: localeCode,
   })
 
   // Fetch works sorted by order
@@ -26,6 +36,7 @@ export default async function PageComponent() {
     collection: 'works',
     sort: 'order',
     limit: 100,
+    locale: localeCode,
   })
 
   const works = worksResult.docs as Work[]
@@ -34,6 +45,7 @@ export default async function PageComponent() {
   const seriesResult = await payload.find({
     collection: 'series',
     limit: 100,
+    locale: localeCode,
   })
 
   const series = seriesResult.docs as Series[]
@@ -42,6 +54,7 @@ export default async function PageComponent() {
   const pressResult = await payload.find({
     collection: 'press',
     limit: 100,
+    locale: localeCode,
   })
 
   const press = pressResult.docs as Press[]
@@ -68,6 +81,7 @@ export default async function PageComponent() {
               background={block.background}
               ctaLabel={block.ctaLabel}
               ctaLink={block.ctaLink}
+              locale={locale}
             />
           )
         }
@@ -80,23 +94,24 @@ export default async function PageComponent() {
           content={biographyBlock.content}
           images={biographyBlock.images}
           files={biographyBlock.files}
+          locale={locale}
         />
       )}
 
       <ScrollSpacer />
 
       {/* Works Gallery Section */}
-      {works.length > 0 && <WorksGallery works={works} />}
+      {works.length > 0 && <WorksGallery works={works} locale={locale} />}
 
       <ScrollSpacer />
 
       {/* Series Gallery Section */}
-      {series.length > 0 && <SeriesGallery series={series} />}
+      {series.length > 0 && <SeriesGallery series={series} locale={locale} />}
 
       <ScrollSpacer />
 
       {/* Press Section */}
-      {press.length > 0 && <PressGallery press={press} />}
+      {press.length > 0 && <PressGallery press={press} locale={locale} />}
     </div>
   )
 }

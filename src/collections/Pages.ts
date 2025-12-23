@@ -13,6 +13,7 @@ export const Pages: CollectionConfig = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'slug',
@@ -37,6 +38,7 @@ export const Pages: CollectionConfig = {
               name: 'heading',
               type: 'text',
               label: 'Title',
+              localized: true,
               admin: {
                 description: 'Main hero title (e.g., "GAGIK HARUTYUNYAN")',
               },
@@ -45,6 +47,7 @@ export const Pages: CollectionConfig = {
               name: 'subtitle',
               type: 'text',
               label: 'Subtitle',
+              localized: true,
               admin: {
                 description: 'Optional subtitle displayed below the title (e.g., "Yerevan")',
               },
@@ -62,6 +65,7 @@ export const Pages: CollectionConfig = {
               name: 'ctaLabel',
               type: 'text',
               label: 'CTA Button Text',
+              localized: true,
               admin: {
                 description: 'Optional call-to-action button label',
               },
@@ -87,6 +91,7 @@ export const Pages: CollectionConfig = {
               name: 'content',
               type: 'richText',
               label: 'Biography Content',
+              localized: true,
               admin: {
                 description: 'Main biography text - use rich text editor for formatting',
               },
@@ -110,6 +115,7 @@ export const Pages: CollectionConfig = {
                   name: 'caption',
                   type: 'text',
                   label: 'Photo Credit',
+                  localized: true,
                   admin: {
                     description: 'Photo credit or copyright information',
                   },
@@ -134,6 +140,7 @@ export const Pages: CollectionConfig = {
                   name: 'label',
                   type: 'text',
                   label: 'Download Label',
+                  localized: true,
                   admin: {
                     description: 'Text to display for the download link',
                   },

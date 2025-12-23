@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { motion, useInView } from 'framer-motion'
 import type { Media } from '@/payload-types'
 import type { RichTextContent, RichTextNode, RichTextChild } from '@/types/richtext'
+import { getTranslations } from '@/lib/translations'
 
 interface BioImage {
   image?: (number | null) | Media
@@ -21,9 +22,11 @@ interface BiographyBlockProps {
   content?: RichTextContent | string
   images?: BioImage[] | null
   files?: BioFile[] | null
+  locale: string
 }
 
-export default function Biography({ content, images, files }: BiographyBlockProps) {
+export default function Biography({ content, images, files, locale }: BiographyBlockProps) {
+  const t = getTranslations(locale)
   const containerRef = useRef<HTMLElement>(null)
   const isInView = useInView(containerRef, { once: true, margin: '-100px' })
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -95,7 +98,7 @@ export default function Biography({ content, images, files }: BiographyBlockProp
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
         >
-          Biography
+          {t.biography}
         </motion.span>
         <motion.div
           className="w-20 h-px bg-black/20 mt-4"
@@ -162,7 +165,7 @@ export default function Biography({ content, images, files }: BiographyBlockProp
                         whileTap={{ scale: 0.9 }}
                         className="flex-1 py-2 px-4 bg-black text-white text-sm font-sans uppercase tracking-widest rounded hover:bg-black/80 transition-colors"
                       >
-                        ← Previous
+                        ← {t.previous}
                       </motion.button>
 
                       <div className="text-xs text-black/50 font-sans whitespace-nowrap">
@@ -175,7 +178,7 @@ export default function Biography({ content, images, files }: BiographyBlockProp
                         whileTap={{ scale: 0.9 }}
                         className="flex-1 py-2 px-4 bg-black text-white text-sm font-sans uppercase tracking-widest rounded hover:bg-black/80 transition-colors"
                       >
-                        Next →
+                        {t.next} →
                       </motion.button>
                     </div>
                   )}
@@ -199,7 +202,7 @@ export default function Biography({ content, images, files }: BiographyBlockProp
                 </div>
               ) : (
                 <div className="w-full h-64 bg-gray-200 rounded flex items-center justify-center text-gray-400">
-                  No images
+                  {t.noImages}
                 </div>
               )}
             </div>
@@ -224,7 +227,7 @@ export default function Biography({ content, images, files }: BiographyBlockProp
                   animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
                 >
-                  Download
+                  {t.download}
                 </motion.h3>
 
                 <div className="space-y-3">

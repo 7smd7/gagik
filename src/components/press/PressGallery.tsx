@@ -1,11 +1,14 @@
 import type { Press as PressType } from '@/payload-types'
 import PressItem from './PressItem'
+import { getTranslations } from '@/lib/translations'
 
 interface Props {
   press: PressType[]
+  locale: string
 }
 
-export default function PressGallery({ press }: Props) {
+export default function PressGallery({ press, locale }: Props) {
+  const t = getTranslations(locale)
   if (!press || !press.length) return null
 
   return (
@@ -13,7 +16,7 @@ export default function PressGallery({ press }: Props) {
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 md:mb-16">
           <span className="text-3xl font-sans uppercase tracking-[0.3em] text-black/40 font-bold">
-            Press
+            {t.press}
           </span>
           <div className="w-20 h-px bg-black/20 mt-4" />
         </div>
@@ -22,7 +25,7 @@ export default function PressGallery({ press }: Props) {
           <div className="divide-y divide-gray-100">
             {press.map((item) => (
               <div key={item.id} className="py-6 last:pb-0">
-                <PressItem item={item} />
+                <PressItem item={item} locale={locale} />
               </div>
             ))}
           </div>

@@ -4,15 +4,18 @@ import { useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Work, Media } from '@/payload-types'
+import { getTranslations } from '@/lib/translations'
 
 interface WorkModalProps {
   work: Work
   onClose: () => void
   onPrevious?: () => void
   onNext?: () => void
+  locale: string
 }
 
-export default function WorkModal({ work, onClose, onPrevious, onNext }: WorkModalProps) {
+export default function WorkModal({ work, onClose, onPrevious, onNext, locale }: WorkModalProps) {
+  const t = getTranslations(locale)
   const image = work.image as Media
   const imageUrl = image?.url
 
@@ -93,7 +96,7 @@ export default function WorkModal({ work, onClose, onPrevious, onNext }: WorkMod
             <button
               onClick={onPrevious}
               className="hidden md:block absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-50 p-2 text-black/40 hover:text-black transition-colors"
-              aria-label="Previous work"
+              aria-label={t.previousWork}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -116,7 +119,7 @@ export default function WorkModal({ work, onClose, onPrevious, onNext }: WorkMod
             <button
               onClick={onNext}
               className="hidden md:block absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-50 p-2 text-black/40 hover:text-black transition-colors"
-              aria-label="Next work"
+              aria-label={t.nextWork}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -200,7 +203,7 @@ export default function WorkModal({ work, onClose, onPrevious, onNext }: WorkMod
               <button
                 onClick={onPrevious}
                 className="p-3 bg-white/90 backdrop-blur rounded-full shadow-lg text-black/60 hover:text-black transition-colors"
-                aria-label="Previous work"
+                aria-label={t.previousWork}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -226,7 +229,7 @@ export default function WorkModal({ work, onClose, onPrevious, onNext }: WorkMod
               <button
                 onClick={onNext}
                 className="p-3 bg-white/90 backdrop-blur rounded-full shadow-lg text-black/60 hover:text-black transition-colors"
-                aria-label="Next work"
+                aria-label={t.nextWork}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

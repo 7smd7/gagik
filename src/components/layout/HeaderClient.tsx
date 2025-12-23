@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
 import { useState } from 'react'
 import type { Media } from '@/payload-types'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher'
 
 interface NavItem {
   label: string
@@ -111,6 +112,7 @@ export default function HeaderClient({ logo, name, navItems }: HeaderClientProps
               </Link>
             </>
           )}
+          <LanguageSwitcher />
         </nav>
 
         {/* Mobile Menu Button */}

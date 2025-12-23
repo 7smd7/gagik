@@ -7,10 +7,12 @@ export const Footer: GlobalConfig = {
     {
       name: 'copyright',
       type: 'text',
+      localized: true,
     },
     {
       name: 'socials',
       type: 'array',
+      localized: true,
       fields: [
         {
           name: 'platform',

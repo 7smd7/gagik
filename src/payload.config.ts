@@ -24,6 +24,24 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+  localization: {
+    locales: [
+      {
+        label: 'English',
+        code: 'en',
+      },
+      {
+        label: 'Armenian',
+        code: 'hy',
+      },
+      {
+        label: 'Russian',
+        code: 'ru',
+      },
+    ],
+    defaultLocale: 'en',
+    fallback: true,
+  },
   collections: [Users, Media, Pages, Works, Series, Press],
   globals: [Header, Footer],
   editor: lexicalEditor(),

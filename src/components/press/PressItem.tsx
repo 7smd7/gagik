@@ -1,16 +1,22 @@
 import type { Press as PressType, Media } from '@/payload-types'
+import { getTranslations } from '@/lib/translations'
 
 interface Props {
   item: PressType
+  locale: string
 }
 
-export default function PressItem({ item }: Props) {
+export default function PressItem({ item, locale }: Props) {
+  const t = getTranslations(locale)
   const file = item.file as unknown as Media | undefined
   const fileUrl = file?.url
   const url = item.url
 
+  // Map locale to supported locale for date formatting
+  const dateLocale = locale === 'hy' ? 'hy-AM' : locale === 'ru' ? 'ru-RU' : 'en-US'
+
   const formattedDate = item.date
-    ? new Date(item.date).toLocaleDateString('en-US', {
+    ? new Date(item.date).toLocaleDateString(dateLocale, {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -24,7 +30,12 @@ export default function PressItem({ item }: Props) {
         <div className="min-w-0">
           <h3 className="font-serif italic text-sm md:text-base leading-tight md:leading-none">
             <span className="align-middle block">{item.title}</span>
-            {item.author && <span className="not-italic font-normal"> by {item.author}</span>}
+            {item.author && (
+              <span className="not-italic font-normal">
+                {' '}
+                {t.by} {item.author}
+              </span>
+            )}
           </h3>
         </div>
 
@@ -41,7 +52,7 @@ export default function PressItem({ item }: Props) {
               rel="noopener noreferrer"
               className="uppercase text-xs md:text-sm font-sans"
             >
-              <span className="hidden md:inline">Online</span>
+              <span className="hidden md:inline">{t.online}</span>
             </a>
           )}
           {fileUrl && (

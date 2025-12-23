@@ -15,6 +15,7 @@ export const Press: CollectionConfig = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
       label: 'Title',
       admin: {
         description: 'Title of the press article',
@@ -23,6 +24,7 @@ export const Press: CollectionConfig = {
     {
       name: 'author',
       type: 'text',
+      localized: true,
       label: 'Author',
       admin: {
         description: 'Writer or author name',
@@ -31,6 +33,7 @@ export const Press: CollectionConfig = {
     {
       name: 'publisher',
       type: 'text',
+      localized: true,
       label: 'Publisher',
       admin: {
         description: 'Publication name (e.g., "The New York Times", "The Times")',

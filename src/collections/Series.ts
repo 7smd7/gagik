@@ -15,6 +15,7 @@ export const Series: CollectionConfig = {
       name: 'name',
       type: 'text',
       required: true,
+      localized: true,
       label: 'Series Name',
       admin: {
         description: 'Name of the photography series (e.g., "Street Photography of Yerevan")',
@@ -65,6 +66,7 @@ export const Series: CollectionConfig = {
         {
           name: 'title',
           type: 'text',
+          localized: true,
           label: 'Title',
           admin: {
             description: 'Title of the photograph',
@@ -73,6 +75,7 @@ export const Series: CollectionConfig = {
         {
           name: 'description',
           type: 'text',
+          localized: true,
           label: 'Description',
           admin: {
             description: 'Description of the photograph',
@@ -89,6 +92,7 @@ export const Series: CollectionConfig = {
         {
           name: 'location',
           type: 'text',
+          localized: true,
           label: 'Location',
           admin: {
             description: 'Where the photograph was taken',

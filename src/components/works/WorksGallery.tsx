@@ -5,9 +5,11 @@ import Image from 'next/image'
 import { motion, useInView } from 'framer-motion'
 import type { Work, Media } from '@/payload-types'
 import WorkModal from './WorkModal'
+import { getTranslations } from '@/lib/translations'
 
 interface WorksGalleryProps {
   works: Work[]
+  locale: string
 }
 
 function WorkCard({ work, onClick }: { work: Work; onClick: () => void }) {
@@ -46,7 +48,8 @@ function WorkCard({ work, onClick }: { work: Work; onClick: () => void }) {
   )
 }
 
-export default function WorksGallery({ works }: WorksGalleryProps) {
+export default function WorksGallery({ works, locale }: WorksGalleryProps) {
+  const t = getTranslations(locale)
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [itemsToShow, setItemsToShow] = useState(6)
   const [itemsPerRow, setItemsPerRow] = useState(3)
@@ -119,7 +122,7 @@ export default function WorksGallery({ works }: WorksGalleryProps) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              Works
+              {t.works}
             </motion.span>
             <motion.div
               className="w-20 h-px bg-black/20 mt-4"
@@ -163,7 +166,7 @@ export default function WorksGallery({ works }: WorksGalleryProps) {
                       transition={{ duration: 0.5 }}
                       className="text-lg text-black/60 font-sans text-center"
                     >
-                      Discover more artworks
+                      {t.discoverMore}
                     </motion.p>
                     <motion.button
                       onClick={loadMore}
@@ -174,7 +177,7 @@ export default function WorksGallery({ works }: WorksGalleryProps) {
                       transition={{ duration: 0.5, delay: 0.1 }}
                       className="px-10 py-4 bg-black text-white text-sm font-sans uppercase tracking-[0.2em] rounded-full hover:bg-black/85 transition-all shadow-lg hover:shadow-xl"
                     >
-                      Load More Works
+                      {t.loadMore}
                     </motion.button>
                     <motion.span
                       initial={{ opacity: 0 }}
@@ -182,7 +185,7 @@ export default function WorksGallery({ works }: WorksGalleryProps) {
                       transition={{ duration: 0.5, delay: 0.2 }}
                       className="text-sm text-black/40 font-sans"
                     >
-                      {works.length - itemsToShow} more works available
+                      {works.length - itemsToShow} {t.moreAvailable}
                     </motion.span>
                   </div>
                 </>
@@ -199,6 +202,7 @@ export default function WorksGallery({ works }: WorksGalleryProps) {
           onClose={closeModal}
           onPrevious={selectedIndex > 0 ? goToPrevious : undefined}
           onNext={selectedIndex < works.length - 1 ? goToNext : undefined}
+          locale={locale}
         />
       )}
     </>

@@ -8,6 +8,7 @@ export const Header: GlobalConfig = {
       name: 'name',
       type: 'text',
       required: true,
+      localized: true,
       defaultValue: 'Gagik Harutyunyan',
     },
     {
@@ -19,6 +20,7 @@ export const Header: GlobalConfig = {
     {
       name: 'navItems',
       type: 'array',
+      localized: true,
       fields: [
         {
           name: 'label',

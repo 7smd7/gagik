@@ -22,6 +22,7 @@ export const Works: CollectionConfig = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
       label: 'Title',
       admin: {
         description: 'Title of the work (e.g., "Gold Mine, Serra Pelada, Brazil")',
@@ -39,6 +40,7 @@ export const Works: CollectionConfig = {
     {
       name: 'place',
       type: 'text',
+      localized: true,
       label: 'Place',
       admin: {
         description: 'Location where the photograph was taken',

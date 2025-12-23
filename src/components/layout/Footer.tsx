@@ -3,10 +3,18 @@ import { getPayload } from 'payload'
 import Link from 'next/link'
 import type { Footer as FooterType } from '@/payload-types'
 
-export default async function Footer() {
+interface FooterProps {
+  locale?: string
+}
+
+export default async function Footer({ locale = 'en' }: FooterProps) {
   const payload = await getPayload({ config: configPromise })
 
-  const footer = (await payload.findGlobal({ slug: 'footer', depth: 1 })) as FooterType
+  const footer = (await payload.findGlobal({
+    slug: 'footer',
+    depth: 1,
+    locale: locale as 'en' | 'hy' | 'ru',
+  })) as FooterType
 
   const socials = footer?.socials ?? []
 
@@ -17,7 +25,7 @@ export default async function Footer() {
           {/* Left: Copyright */}
           <div>
             <p className="text-xs font-sans text-white/40">
-              © {new Date().getFullYear()} Gagik Harutyunyan
+              {footer?.copyright || `© ${new Date().getFullYear()} Gagik Harutyunyan`}
             </p>
             <p className="text-xs font-sans text-white/40 mt-1">All rights reserved</p>
           </div>

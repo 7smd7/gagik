@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import type { Media } from '@/payload-types'
+import { getTranslations } from '@/lib/translations'
 
 interface HeroProps {
   heading?: string | null
@@ -11,9 +12,11 @@ interface HeroProps {
   background?: (number | null) | Media
   ctaLabel?: string | null
   ctaLink?: string | null
+  locale: string
 }
 
-export default function Hero({ heading, subtitle, background }: HeroProps) {
+export default function Hero({ heading, subtitle, background, locale }: HeroProps) {
+  const t = getTranslations(locale)
   const containerRef = useRef<HTMLElement>(null)
   const backgroundUrl = background && typeof background === 'object' ? background.url : undefined
   const backgroundAlt =
@@ -100,7 +103,7 @@ export default function Hero({ heading, subtitle, background }: HeroProps) {
       >
         <div className="flex flex-col items-center gap-3">
           <span className="text-[10px] font-sans uppercase tracking-[0.3em] text-white/50">
-            Scroll
+            {t.scroll}
           </span>
           <motion.div
             className="w-px h-16 bg-white/30 relative overflow-hidden"

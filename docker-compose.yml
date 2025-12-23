@@ -12,6 +12,8 @@ services:
       - postgres
     env_file:
       - .env
+    environment:
+      - PAYLOAD_DROP_DATABASE=false
 
   # Using Postgres as the database. Example DATABASE_URI:
   #   postgres://postgres:postgres@postgres:5432/gagik

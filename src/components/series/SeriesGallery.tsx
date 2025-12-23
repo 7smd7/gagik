@@ -5,12 +5,23 @@ import Image from 'next/image'
 import { motion, useInView } from 'framer-motion'
 import type { Series as SeriesType, Media } from '@/payload-types'
 import SeriesModal from '@/components/series/SeriesModal'
+import { getTranslations } from '@/lib/translations'
 
 interface SeriesGalleryProps {
   series: SeriesType[]
+  locale: string
 }
 
-function SeriesCard({ series, onClick }: { series: SeriesType; onClick: () => void }) {
+function SeriesCard({
+  series,
+  onClick,
+  locale,
+}: {
+  series: SeriesType
+  onClick: () => void
+  locale: string
+}) {
+  const t = getTranslations(locale)
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '100px' })
 
@@ -52,7 +63,7 @@ function SeriesCard({ series, onClick }: { series: SeriesType; onClick: () => vo
         <div className="space-y-0.5 text-xs md:text-sm text-white/90">
           {dateRange && <div className="font-sans">{dateRange}</div>}
           <div className="font-sans">
-            {imageCount} {imageCount === 1 ? 'photo' : 'photos'}
+            {imageCount} {imageCount === 1 ? t.photo : t.photos}
           </div>
         </div>
       </div>
@@ -60,7 +71,8 @@ function SeriesCard({ series, onClick }: { series: SeriesType; onClick: () => vo
   )
 }
 
-export default function SeriesGallery({ series }: SeriesGalleryProps) {
+export default function SeriesGallery({ series, locale }: SeriesGalleryProps) {
+  const t = getTranslations(locale)
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [visibleSeries, setVisibleSeries] = useState<SeriesType[]>([])
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -138,7 +150,7 @@ export default function SeriesGallery({ series }: SeriesGalleryProps) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              Series
+              {t.series}
             </motion.span>
             <motion.div
               className="w-20 h-px bg-black/20 mt-4"
@@ -157,7 +169,12 @@ export default function SeriesGallery({ series }: SeriesGalleryProps) {
               style={{ scrollBehavior: 'smooth' }}
             >
               {visibleSeries.map((item, index) => (
-                <SeriesCard key={item.id ?? index} series={item} onClick={() => openModal(index)} />
+                <SeriesCard
+                  key={item.id ?? index}
+                  series={item}
+                  onClick={() => openModal(index)}
+                  locale={locale}
+                />
               ))}
             </div>
 
@@ -178,7 +195,7 @@ export default function SeriesGallery({ series }: SeriesGalleryProps) {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="mt-8 text-center text-sm text-black/40 font-sans"
             >
-              Scroll to see more series
+              {t.scrollToSeeMore}
             </motion.p>
           )}
         </div>
