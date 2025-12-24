@@ -704,21 +704,47 @@ export interface TranslationSetting {
    */
   geminiApiKey?: string | null;
   /**
+   * Model name (e.g., gemini-2.0-flash, gemini-2.5-flash-lite)
+   */
+  geminiModel?: string | null;
+  /**
    * Get your API key from https://platform.openai.com/api-keys
    */
   openaiApiKey?: string | null;
   /**
-   * Auto-translate to English
+   * Model name (e.g., gpt-4o-mini, gpt-4o, gpt-4-turbo)
    */
-  enableEnglish?: boolean | null;
+  openaiModel?: string | null;
   /**
-   * Auto-translate to Armenian
+   * Automatically translate content to English
    */
-  enableArmenian?: boolean | null;
+  translateEnglish?: boolean | null;
   /**
-   * Auto-translate to Russian
+   * Display English in language switcher
    */
-  enableRussian?: boolean | null;
+  showEnglish?: boolean | null;
+  /**
+   * Automatically translate content to Armenian
+   */
+  translateArmenian?: boolean | null;
+  /**
+   * Display Armenian in language switcher
+   */
+  showArmenian?: boolean | null;
+  /**
+   * Automatically translate content to Russian
+   */
+  translateRussian?: boolean | null;
+  /**
+   * Display Russian in language switcher
+   */
+  showRussian?: boolean | null;
+  /**
+   * • Auto-Translate: Automatically translate new content to this language
+   * • Show in Frontend: Display this language in the website language switcher
+   * • You can translate without showing (for testing) or show without auto-translation (manual translation)
+   */
+  localeHelp?: string | null;
   /**
    * Turn off to temporarily disable automatic translations without losing your settings
    */
@@ -768,10 +794,16 @@ export interface FooterSelect<T extends boolean = true> {
 export interface TranslationSettingsSelect<T extends boolean = true> {
   provider?: T;
   geminiApiKey?: T;
+  geminiModel?: T;
   openaiApiKey?: T;
-  enableEnglish?: T;
-  enableArmenian?: T;
-  enableRussian?: T;
+  openaiModel?: T;
+  translateEnglish?: T;
+  showEnglish?: T;
+  translateArmenian?: T;
+  showArmenian?: T;
+  translateRussian?: T;
+  showRussian?: T;
+  localeHelp?: T;
   enableTranslation?: T;
   updatedAt?: T;
   createdAt?: T;

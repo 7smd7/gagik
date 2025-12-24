@@ -1,5 +1,11 @@
 import type { Config, Plugin } from 'payload'
-import { TranslationTargetLocale, translateBatch, getEnabledLocales } from './translationService'
+import {
+  TranslationTargetLocale,
+  translateBatch,
+  getEnabledLocales,
+  isTranslationEnabled,
+} from './translationService'
+import { log } from 'console'
 
 interface TranslationPayload {
   id: string | number
@@ -184,12 +190,16 @@ async function translateAndUpdateLocale(
     const mergedData = { ...existingDoc, ...translatedFields }
 
     // Update the same document in the target locale using Payload API
+    // Use context to prevent triggering translation hook again
     await payload.update({
       collection: collectionSlug,
       id,
       data: mergedData,
       locale: targetLocale,
       fallbackLocale: false,
+      context: {
+        skipTranslation: true, // Flag to prevent infinite loop
+      },
     })
 
     console.log(`[Translation] Successfully translated ${collectionSlug}/${id} to ${targetLocale}`)
@@ -209,28 +219,18 @@ export const translationPlugin = (): Plugin => {
       config.hooks = {}
     }
 
-    // Hook into afterChange for all translatable collections
-    const collectionsToTranslate = ['series', 'works', 'press', 'pages']
+    // Hook into afterChange for all collections with localized fields
+    config.collections?.forEach((originalCollectionConfig) => {
+      // Extract localized fields from this collection's schema
+      const localizedFields = getLocalizedFieldPaths(originalCollectionConfig)
 
-    collectionsToTranslate.forEach((collectionSlug) => {
-      const originalCollectionConfig = config.collections?.find((c) => c.slug === collectionSlug)
+      if (localizedFields.length === 0) {
+        return
+      }
+
+      const collectionSlug = originalCollectionConfig.slug
 
       if (originalCollectionConfig) {
-        // Extract localized fields from this collection's schema
-        const localizedFields = getLocalizedFieldPaths(originalCollectionConfig)
-
-        if (localizedFields.length === 0) {
-          console.log(
-            `[Translation Plugin] No localized fields found in ${collectionSlug}, skipping`,
-          )
-          return
-        }
-
-        console.log(
-          `[Translation Plugin] Registered ${collectionSlug} with localized fields:`,
-          localizedFields,
-        )
-
         if (!originalCollectionConfig.hooks) {
           originalCollectionConfig.hooks = {}
         }
@@ -243,39 +243,58 @@ export const translationPlugin = (): Plugin => {
             : originalAfterChange
               ? [originalAfterChange]
               : []),
-          async ({ doc, operation, req }) => {
+          async ({ doc, operation, req, context }) => {
+            // Fast checks first (no I/O operations)
+
             // Only trigger on create operations
-            if (operation === 'create') {
-              const sourceLocale = req.locale || 'en'
-
-              const translationData: TranslationPayload = {
-                id: doc.id,
-                sourceLocale,
-                collectionSlug,
-                data: doc,
-              }
-
-              // Get enabled locales from settings and exclude source locale
-              const enabledLocales = await getEnabledLocales(req.payload)
-              const targetLocales = enabledLocales.filter((locale) => locale !== sourceLocale)
-
-              if (targetLocales.length === 0) {
-                console.log('[Translation] No target locales enabled, skipping translation')
-                return
-              }
-
-              // Translate to all enabled locales (non-blocking)
-              targetLocales.forEach((targetLocale) => {
-                translateAndUpdateLocale(
-                  req.payload,
-                  translationData,
-                  targetLocale,
-                  localizedFields,
-                ).catch((error) => {
-                  console.error(`[Translation] Background translation failed:`, error)
-                })
-              })
+            if (operation !== 'create') {
+              return
             }
+
+            // Skip if this update was triggered by the translation plugin itself
+            if (context?.skipTranslation) {
+              return
+            }
+
+            // Now check database setting (cached, but still slower than above checks)
+            const translationEnabled = await isTranslationEnabled(req.payload)
+            if (!translationEnabled) {
+              return
+            }
+
+            const sourceLocale = req.locale || 'en'
+
+            const translationData: TranslationPayload = {
+              id: doc.id,
+              sourceLocale,
+              collectionSlug,
+              data: doc,
+            }
+
+            // Get enabled locales from settings and exclude source locale
+            const enabledLocales = await getEnabledLocales(req.payload)
+            const targetLocales = enabledLocales.filter((locale) => locale !== sourceLocale)
+
+            if (targetLocales.length === 0) {
+              console.log('[Translation] No target locales enabled, skipping translation')
+              return
+            }
+
+            console.log(
+              `[Translation] Starting translation for ${collectionSlug}/${doc.id} from ${sourceLocale} to ${targetLocales.join(', ')}`,
+            )
+
+            // Translate to all enabled locales (non-blocking)
+            targetLocales.forEach((targetLocale) => {
+              translateAndUpdateLocale(
+                req.payload,
+                translationData,
+                targetLocale,
+                localizedFields,
+              ).catch((error) => {
+                console.error(`[Translation] Background translation failed:`, error)
+              })
+            })
           },
         ]
       }

@@ -37,7 +37,13 @@ async function getTranslationSettings(payload: any): Promise<any> {
   }
 }
 
-// Get enabled locales from settings
+// Check if translation is globally enabled
+export async function isTranslationEnabled(payload: any): Promise<boolean> {
+  const settings = await getTranslationSettings(payload)
+  return settings.enableTranslation === true
+}
+
+// Get enabled locales for auto-translation from settings
 export async function getEnabledLocales(payload: any): Promise<TranslationTargetLocale[]> {
   const settings = await getTranslationSettings(payload)
 
@@ -46,9 +52,11 @@ export async function getEnabledLocales(payload: any): Promise<TranslationTarget
   }
 
   const enabled: TranslationTargetLocale[] = []
-  if (settings.enableEnglish !== false) enabled.push('en')
-  if (settings.enableArmenian !== false) enabled.push('hy')
-  if (settings.enableRussian !== false) enabled.push('ru')
+
+  // Check auto-translate flags (separate from frontend visibility)
+  if (settings.translateEnglish !== false) enabled.push('en')
+  if (settings.translateArmenian !== false) enabled.push('hy')
+  if (settings.translateRussian !== false) enabled.push('ru')
 
   return enabled
 }
@@ -61,11 +69,13 @@ async function initClients(payload: any) {
   const geminiKey = settings.geminiApiKey || process.env.GEMINI_API_KEY || ''
   const openaiKey = settings.openaiApiKey || process.env.OPENAI_API_KEY || ''
   const provider = settings.provider || process.env.TRANSLATION_PROVIDER || 'gemini'
+  const geminiModel = settings.geminiModel || 'gemini-2.0-flash-exp'
+  const openaiModel = settings.openaiModel || 'gpt-4o-mini'
 
   const genAI = new GoogleGenerativeAI(geminiKey)
   const openai = new OpenAI({ apiKey: openaiKey })
 
-  return { genAI, openai, provider }
+  return { genAI, openai, provider, geminiModel, openaiModel }
 }
 
 // Batch translate all fields at once using JSON structured prompting
@@ -78,18 +88,18 @@ export async function translateBatch(
     return {}
   }
 
-  const { genAI, openai, provider } = await initClients(payload)
+  const { genAI, openai, provider, geminiModel, openaiModel } = await initClients(payload)
 
   let translated: Record<string, any>
   if (provider === 'openai') {
-    translated = await translateBatchWithOpenAI(data, targetLocale, openai)
+    translated = await translateBatchWithOpenAI(data, targetLocale, openai, openaiModel)
   } else {
     // Default: Gemini, fallback to OpenAI on error
     try {
-      translated = await translateBatchWithGemini(data, targetLocale, genAI)
+      translated = await translateBatchWithGemini(data, targetLocale, genAI, geminiModel)
     } catch (err) {
       console.warn('Gemini failed, falling back to OpenAI:', err)
-      translated = await translateBatchWithOpenAI(data, targetLocale, openai)
+      translated = await translateBatchWithOpenAI(data, targetLocale, openai, openaiModel)
     }
   }
 
@@ -100,8 +110,9 @@ async function translateBatchWithGemini(
   data: Record<string, any>,
   targetLocale: TranslationTargetLocale,
   genAI: GoogleGenerativeAI,
+  modelName: string,
 ): Promise<Record<string, any>> {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+  const model = genAI.getGenerativeModel({ model: modelName })
 
   const systemPrompt = [
     `You are a professional translator. Translate all text values in the JSON to ${localeNames[targetLocale]}.`,
@@ -131,9 +142,10 @@ async function translateBatchWithOpenAI(
   data: Record<string, any>,
   targetLocale: TranslationTargetLocale,
   openai: OpenAI,
+  modelName: string,
 ): Promise<Record<string, any>> {
   const completion = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
+    model: modelName,
     messages: [
       {
         role: 'system',
