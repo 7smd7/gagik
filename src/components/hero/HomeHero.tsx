@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useLayoutEffect, useState } from 'react'
 import type { Media } from '@/payload-types'
 import { getTranslations } from '@/lib/translations'
 
@@ -18,6 +18,37 @@ interface HeroProps {
 export default function Hero({ heading, subtitle, background, locale }: HeroProps) {
   const t = getTranslations(locale)
   const containerRef = useRef<HTMLElement>(null)
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  const [fontSize, setFontSize] = useState<number | undefined>(undefined)
+
+  const renderedHeading = (() => {
+    const value = heading?.trim()
+    if (!value) return null
+
+    const newlineParts = value.split(/\r?\n/).filter(Boolean)
+    if (newlineParts.length >= 2) {
+      return (
+        <>
+          {newlineParts[0]}
+          <br />
+          {newlineParts.slice(1).join(' ')}
+        </>
+      )
+    }
+
+    const firstSpace = value.indexOf(' ')
+    if (firstSpace > 0) {
+      return (
+        <>
+          {value.slice(0, firstSpace)}
+          <br />
+          {value.slice(firstSpace + 1)}
+        </>
+      )
+    }
+
+    return value
+  })()
   const backgroundUrl = background && typeof background === 'object' ? background.url : undefined
   const backgroundAlt =
     background && typeof background === 'object' ? background.alt : 'Hero background'
@@ -35,6 +66,53 @@ export default function Hero({ heading, subtitle, background, locale }: HeroProp
   // Image parallax - moves down relative to scroll
   const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '20%'])
   const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1])
+
+  // Dynamic font-sizing to prevent overflow (allows wrapping to 2 lines)
+  useLayoutEffect(() => {
+    const heading = headingRef.current
+    const container = containerRef.current
+    if (!heading || !container) return
+
+    const calculateFontSize = () => {
+      // Start with 13vw as base (matching the English style)
+      const vwSize = window.innerWidth * 0.13
+      let size = Math.min(vwSize, 200) // Cap at reasonable maximum
+
+      // Apply initial size and allow wrapping
+      heading.style.fontSize = `${size}px`
+      heading.style.whiteSpace = 'normal' // Allow text to wrap
+
+      // Get available width and height
+      const availableWidth = container.clientWidth * 0.9
+      const availableHeight = container.clientHeight * 0.6 // Max 60% of viewport height
+
+      // Shrink only if text overflows horizontally after wrapping OR exceeds height limit
+      let iterations = 0
+      while (
+        (heading.scrollWidth > availableWidth || heading.scrollHeight > availableHeight) &&
+        size > 30 &&
+        iterations < 100
+      ) {
+        size -= 2
+        heading.style.fontSize = `${size}px`
+        iterations++
+      }
+
+      setFontSize(size)
+    }
+
+    calculateFontSize()
+
+    // Recalculate on resize
+    const resizeObserver = new ResizeObserver(calculateFontSize)
+    resizeObserver.observe(container)
+    window.addEventListener('resize', calculateFontSize)
+
+    return () => {
+      resizeObserver.disconnect()
+      window.removeEventListener('resize', calculateFontSize)
+    }
+  }, [heading, locale])
 
   return (
     <section ref={containerRef} className="h-screen w-full relative overflow-hidden bg-black">
@@ -66,12 +144,14 @@ export default function Hero({ heading, subtitle, background, locale }: HeroProp
           style={{ y: textY, opacity: textOpacity, scale: textScale }}
         >
           <motion.h1
-            className="font-display text-[13vw] md:text-[13vw] leading-[1.1] font-bold uppercase text-white tracking-tight"
+            ref={headingRef}
+            style={{ fontSize: fontSize ? `${fontSize}px` : undefined }}
+            className="font-display leading-[1.1] font-bold uppercase text-white tracking-tight"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
           >
-            {heading || (
+            {renderedHeading || (
               <>
                 Artistry
                 <br />
