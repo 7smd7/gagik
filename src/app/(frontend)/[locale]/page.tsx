@@ -16,7 +16,8 @@ interface PageProps {
 }
 
 export default async function PageComponent({ params }: PageProps) {
-  const { locale } = await params
+  const { locale: _local } = await params
+  const locale = _local == 'am' ? 'hy' : _local
   const payload = await getPayload({ config: configPromise })
 
   const localeCode = locale as 'en' | 'hy' | 'ru'

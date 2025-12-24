@@ -20,7 +20,7 @@ export async function GET() {
     }
 
     if (settings?.showArmenian !== false) {
-      locales.push({ code: 'hy', label: 'HY', name: 'Armenian' })
+      locales.push({ code: 'hy', label: 'AM', name: 'Armenian' })
     }
 
     if (settings?.showRussian !== false) {
