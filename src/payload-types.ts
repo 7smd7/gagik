@@ -98,10 +98,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    'translation-settings': TranslationSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'translation-settings': TranslationSettingsSelect<false> | TranslationSettingsSelect<true>;
   };
   locale: 'en' | 'hy' | 'ru';
   user: User & {
@@ -689,6 +691,43 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "translation-settings".
+ */
+export interface TranslationSetting {
+  id: number;
+  /**
+   * Choose which AI service to use for translations
+   */
+  provider: 'gemini' | 'openai';
+  /**
+   * Get your API key from https://aistudio.google.com/app/apikey
+   */
+  geminiApiKey?: string | null;
+  /**
+   * Get your API key from https://platform.openai.com/api-keys
+   */
+  openaiApiKey?: string | null;
+  /**
+   * Auto-translate to English
+   */
+  enableEnglish?: boolean | null;
+  /**
+   * Auto-translate to Armenian
+   */
+  enableArmenian?: boolean | null;
+  /**
+   * Auto-translate to Russian
+   */
+  enableRussian?: boolean | null;
+  /**
+   * Turn off to temporarily disable automatic translations without losing your settings
+   */
+  enableTranslation?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -718,6 +757,22 @@ export interface FooterSelect<T extends boolean = true> {
         url?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "translation-settings_select".
+ */
+export interface TranslationSettingsSelect<T extends boolean = true> {
+  provider?: T;
+  geminiApiKey?: T;
+  openaiApiKey?: T;
+  enableEnglish?: T;
+  enableArmenian?: T;
+  enableRussian?: T;
+  enableTranslation?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

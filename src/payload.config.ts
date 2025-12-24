@@ -13,6 +13,8 @@ import { Series } from './collections/Series'
 import { Press } from './collections/Press'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
+import { TranslationSettings } from './globals/TranslationSettings'
+import { translationPlugin } from './plugins/translationPlugin'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -43,7 +45,7 @@ export default buildConfig({
     fallback: true,
   },
   collections: [Users, Media, Pages, Works, Series, Press],
-  globals: [Header, Footer],
+  globals: [Header, Footer, TranslationSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -55,5 +57,5 @@ export default buildConfig({
     },
   }),
   sharp,
-  plugins: [],
+  plugins: [translationPlugin()],
 })
