@@ -12,7 +12,10 @@ export default function PressGallery({ press, locale }: Props) {
   if (!press || !press.length) return null
 
   return (
-    <section className="relative bg-white py-20 md:py-28 px-6 md:px-8 lg:px-16 overflow-x-hidden">
+    <section
+      id="Press"
+      className="relative bg-white py-20 md:py-28 px-6 md:px-8 lg:px-16 overflow-x-hidden"
+    >
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 md:mb-16">
           <span className="text-3xl font-sans uppercase tracking-[0.3em] text-black/40 font-bold">

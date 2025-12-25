@@ -84,7 +84,7 @@ export default function Biography({ content, images, files, locale }: BiographyB
   }
 
   return (
-    <section ref={containerRef} className="bg-white py-16 px-6 md:px-8 lg:px-16">
+    <section id="Biography" ref={containerRef} className="bg-white py-16 px-6 md:px-8 lg:px-16">
       {/* Section Title*/}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

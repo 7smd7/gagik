@@ -8,6 +8,7 @@ import WorksGallery from '@/components/works/WorksGallery'
 import SeriesGallery from '@/components/series/SeriesGallery'
 import PressGallery from '@/components/press/PressGallery'
 import ScrollSpacer from '@/components/layout/ScrollSpacer'
+import HashScroller from '@/components/layout/HashScroller'
 
 interface PageProps {
   params: Promise<{
@@ -71,6 +72,7 @@ export default async function PageComponent({ params }: PageProps) {
 
   return (
     <div className="bg-black">
+      <HashScroller />
       {/* Hero Section */}
       {page.layout?.map((block, index) => {
         if (block.blockType === 'hero') {

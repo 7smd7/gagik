@@ -107,7 +107,11 @@ export default function WorksGallery({ works, locale }: WorksGalleryProps) {
 
   return (
     <>
-      <section ref={sectionRef} className="relative bg-white py-20 md:py-28 px-6 md:px-8 lg:px-16">
+      <section
+        id="Works"
+        ref={sectionRef}
+        className="relative bg-white py-20 md:py-28 px-6 md:px-8 lg:px-16"
+      >
         <div className="mx-auto">
           {/* Section Title*/}
           <motion.div

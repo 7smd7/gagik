@@ -115,7 +115,11 @@ export default function Hero({ heading, subtitle, background, locale }: HeroProp
   }, [heading, locale])
 
   return (
-    <section ref={containerRef} className="h-screen w-full relative overflow-hidden bg-black">
+    <section
+      id="Hero"
+      ref={containerRef}
+      className="h-screen w-full relative overflow-hidden bg-black"
+    >
       {/* Background Image with Parallax */}
       <motion.div
         className="absolute inset-0 z-0"

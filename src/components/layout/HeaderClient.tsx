@@ -83,7 +83,7 @@ export default function HeaderClient({ logo, name, navItems }: HeaderClientProps
             ))
           ) : (
             <>
-              <Link href="/">
+              <Link href="#Works">
                 <motion.span
                   className="text-xs font-sans uppercase tracking-[0.15em] hover:opacity-60 transition-opacity"
                   animate={{ color: isScrolled ? '#000000' : '#ffffff' }}
@@ -92,7 +92,7 @@ export default function HeaderClient({ logo, name, navItems }: HeaderClientProps
                   Work
                 </motion.span>
               </Link>
-              <Link href="/about">
+              <Link href="#Biography">
                 <motion.span
                   className="text-xs font-sans uppercase tracking-[0.15em] hover:opacity-60 transition-opacity"
                   animate={{ color: isScrolled ? '#000000' : '#ffffff' }}
@@ -101,7 +101,7 @@ export default function HeaderClient({ logo, name, navItems }: HeaderClientProps
                   About
                 </motion.span>
               </Link>
-              <Link href="/contact">
+              <Link href="#Contact">
                 <motion.span
                   className="text-xs font-sans uppercase tracking-[0.15em] hover:opacity-60 transition-opacity"
                   animate={{ color: isScrolled ? '#000000' : '#ffffff' }}
@@ -160,7 +160,7 @@ export default function HeaderClient({ logo, name, navItems }: HeaderClientProps
               ) : (
                 <>
                   <Link
-                    href="/"
+                    href="#Works"
                     className="w-11/12 max-w-xs text-center py-6 text-3xl font-sans uppercase tracking-[0.2em] text-white bg-white/10 rounded-xl shadow hover:bg-white/20 transition-colors"
                     onClick={() => setMenuOpen(false)}
                     role="button"
@@ -168,7 +168,7 @@ export default function HeaderClient({ logo, name, navItems }: HeaderClientProps
                     Work
                   </Link>
                   <Link
-                    href="/about"
+                    href="#Biography"
                     className="w-11/12 max-w-xs text-center py-6 text-3xl font-sans uppercase tracking-[0.2em] text-white bg-white/10 rounded-xl shadow hover:bg-white/20 transition-colors"
                     onClick={() => setMenuOpen(false)}
                     role="button"
@@ -176,7 +176,7 @@ export default function HeaderClient({ logo, name, navItems }: HeaderClientProps
                     About
                   </Link>
                   <Link
-                    href="/contact"
+                    href="#Contact"
                     className="w-11/12 max-w-xs text-center py-6 text-3xl font-sans uppercase tracking-[0.2em] text-white bg-white/10 rounded-xl shadow hover:bg-white/20 transition-colors"
                     onClick={() => setMenuOpen(false)}
                     role="button"
