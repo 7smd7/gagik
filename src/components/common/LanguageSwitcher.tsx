@@ -33,6 +33,7 @@ export default function LanguageSwitcher() {
   }, [])
 
   const handleLocaleChange = (locale: string) => {
+    locale = locale == 'hy' ? 'am' : locale // Map 'hy' to 'am'
     const newPathname = `/${locale}${pathname.substring(currentLocale.length + 1)}`
     router.push(newPathname)
   }

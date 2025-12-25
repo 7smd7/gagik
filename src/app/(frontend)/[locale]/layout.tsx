@@ -38,7 +38,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   return (
     <html lang={locale} className={`${inter.variable} ${playfair.variable} ${oswald.variable}`}>
-      <body className="bg-black text-white font-sans antialiased">
+      <body suppressHydrationWarning={true} className="bg-black text-white font-sans antialiased">
         <SmoothScroll>
           <Header locale={locale} />
           <main>{children}</main>
