@@ -3,6 +3,9 @@ import type { GlobalConfig } from 'payload'
 export const Footer: GlobalConfig = {
   slug: 'footer',
   label: 'Footer',
+  versions: {
+    max: 100,
+  },
   fields: [
     {
       name: 'copyright',

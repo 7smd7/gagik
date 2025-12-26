@@ -6,7 +6,38 @@ export const Pages: CollectionConfig = {
     useAsTitle: 'title',
   },
   access: {
-    read: () => true,
+    read: ({ req }) => {
+      // If there is a user logged in (admin),
+      // let them retrieve all documents
+      if (req.user) return true
+
+      // If there is no user (public),
+      // restrict the documents that are returned
+      // to only those where `_status` is equal to `published`
+      // or where `_status` does not exist (old documents)
+      return {
+        or: [
+          {
+            _status: {
+              equals: 'published',
+            },
+          },
+          {
+            _status: {
+              exists: false,
+            },
+          },
+        ],
+      }
+    },
+  },
+  versions: {
+    maxPerDoc: 100,
+    drafts: {
+      autosave: {
+        interval: 800,
+      },
+    },
   },
   fields: [
     {

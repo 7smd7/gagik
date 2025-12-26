@@ -3,6 +3,9 @@ import type { GlobalConfig } from 'payload'
 export const Header: GlobalConfig = {
   slug: 'header',
   label: 'Header',
+  versions: {
+    max: 100,
+  },
   fields: [
     {
       name: 'name',
