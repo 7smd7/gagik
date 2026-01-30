@@ -9,7 +9,11 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URI: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-gagik}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-gagik}
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
       PAYLOAD_CONFIG_PATH: ${PAYLOAD_CONFIG_PATH:-src/payload.config.ts}
       NODE_ENV: production
