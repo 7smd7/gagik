@@ -3,8 +3,8 @@ import { withPayload } from '@payloadcms/next/withPayload'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Your Next.js config here
+  output: 'standalone',
   experimental: {
-    turbo: false, // Disable Turbopack for production builds
     serverActions: {
       bodySizeLimit: 52428800,
     },
