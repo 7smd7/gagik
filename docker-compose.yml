@@ -1,34 +1,42 @@
 services:
-  payload:
-    image: node:22-alpine
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - '3003:3003'
-    volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "npm install && npm run dev"
+      - '8374:8374'
     depends_on:
-      - postgres
-    env_file:
-      - .env
+      postgres:
+        condition: service_healthy
     environment:
-      - PAYLOAD_DROP_DATABASE=false
+      DATABASE_URI: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-gagik}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+      PAYLOAD_CONFIG_PATH: ${PAYLOAD_CONFIG_PATH:-src/payload.config.ts}
+      NODE_ENV: production
+    restart: unless-stopped
+    labels:
+      - 'coolify.managed=true'
+      - 'coolify.name=Gagik App'
+      - 'coolify.description=Payload CMS application'
 
-  # Using Postgres as the database. Example DATABASE_URI:
-  #   postgres://postgres:postgres@postgres:5432/gagik
-
-  # Uncomment the following to use postgres
   postgres:
-    restart: always
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: gagik
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-gagik}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    labels:
+      - 'coolify.managed=true'
+      - 'coolify.name=PostgreSQL Database'
+      - 'coolify.description=Database for Gagik'
 
 volumes:
   pgdata:
