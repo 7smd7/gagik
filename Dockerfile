@@ -25,10 +25,16 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Disable Turbopack for production builds (Payload compatibility)
+ENV TURBOPACK=0
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
+
+# Disable Turbopack for production builds (PayloadCMS doesn't support it)
+ENV TURBOPACK=0
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
@@ -42,6 +48,8 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
+# Disable Turbopack at runtime as well
+ENV TURBOPACK=0
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
@@ -61,7 +69,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=deps /app/node_modules ./node_modules
 
 # Include source config for Payload CLI
-COPY --from=builder /app/src ./src
+COPY --from=builder --chown=nextjs:nodejs /app/src ./src
 
 USER nextjs
 
