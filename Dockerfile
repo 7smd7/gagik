@@ -71,5 +71,5 @@ ENV PORT 8374
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
-# Run migrations on startup (idempotent) then start the server
-CMD ["sh", "-c", "cd /app && ./node_modules/.bin/payload migrate && HOSTNAME=0.0.0.0 node server.js"]
+# Create an initial migration if none exist, run migrations, then start the server
+CMD ["sh", "-c", "cd /app && if [ ! -d ./src/migrations ] || [ -z \"$(ls -A ./src/migrations 2>/dev/null)\" ]; then PAYLOAD_CONFIG_PATH=src/payload.config.ts ./node_modules/.bin/payload migrate:create --skip-empty --force-accept-warning init; fi; PAYLOAD_CONFIG_PATH=src/payload.config.ts ./node_modules/.bin/payload migrate; HOSTNAME=0.0.0.0 node server.js"]
