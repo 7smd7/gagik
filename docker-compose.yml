@@ -3,6 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - R2_BUCKET=${R2_BUCKET:-}
+        - R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID:-}
+        - R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY:-}
+        - R2_ENDPOINT=${R2_ENDPOINT:-}
     ports:
       - '8374:8374'
     depends_on:
@@ -16,6 +21,10 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-gagik}
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
       PAYLOAD_CONFIG_PATH: ${PAYLOAD_CONFIG_PATH:-src/payload.config.ts}
+      R2_BUCKET: ${R2_BUCKET:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      R2_ENDPOINT: ${R2_ENDPOINT:-}
       NODE_ENV: production
     restart: unless-stopped
     labels:

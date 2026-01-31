@@ -25,6 +25,16 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# R2 Storage build args (needed for Next.js build)
+ARG R2_BUCKET
+ARG R2_ACCESS_KEY_ID
+ARG R2_SECRET_ACCESS_KEY
+ARG R2_ENDPOINT
+ENV R2_BUCKET=${R2_BUCKET}
+ENV R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}
+ENV R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY}
+ENV R2_ENDPOINT=${R2_ENDPOINT}
+
 # Disable Turbopack for production builds (Payload compatibility)
 ENV TURBOPACK=0
 
