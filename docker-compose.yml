@@ -8,6 +8,7 @@ services:
         - R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID:-}
         - R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY:-}
         - R2_ENDPOINT=${R2_ENDPOINT:-}
+        - R2_CUSTOM_DOMAIN=${R2_CUSTOM_DOMAIN:-}
     ports:
       - '8374:8374'
     depends_on:
@@ -25,6 +26,7 @@ services:
       R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
       R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
       R2_ENDPOINT: ${R2_ENDPOINT:-}
+      R2_CUSTOM_DOMAIN: ${R2_CUSTOM_DOMAIN:-}
       NODE_ENV: production
     restart: unless-stopped
     labels:
