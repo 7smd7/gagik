@@ -2,14 +2,26 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
-let s3Storage: any | undefined
+let cloudStoragePlugin: any | undefined
+let createR2AdapterFactory: any | undefined
 try {
   // require at runtime to avoid static bundler resolution errors during Next/Turbopack build
-  // the module may not be present in some environments
+  // plugin may not be present at build-time
 
-  s3Storage = require('@payloadcms/plugin-cloud-storage/s3')?.s3Storage
+  cloudStoragePlugin =
+    require('@payloadcms/plugin-cloud-storage')?.cloudStoragePlugin ||
+    require('@payloadcms/plugin-cloud-storage')?.default
 } catch (e) {
-  s3Storage = undefined
+  cloudStoragePlugin = undefined
+}
+
+try {
+  // local adapter implemented in src/plugins/r2Adapter.ts
+
+  createR2AdapterFactory =
+    require('./plugins/r2Adapter').createR2AdapterFactory || require('./plugins/r2Adapter').default
+} catch (e) {
+  createR2AdapterFactory = undefined
 }
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -72,27 +84,25 @@ export default buildConfig({
   sharp,
   plugins: [
     translationPlugin(),
-    // Only use R2 storage when credentials are configured and plugin is available
-    ...(s3Storage &&
+    // Only use R2 storage when credentials are configured and plugin + adapter are available
+    ...(cloudStoragePlugin &&
+    createR2AdapterFactory &&
     process.env.R2_BUCKET &&
     process.env.R2_ACCESS_KEY_ID &&
     process.env.R2_SECRET_ACCESS_KEY &&
     process.env.R2_ENDPOINT
       ? [
-          s3Storage({
+          cloudStoragePlugin({
             collections: {
               media: {
+                adapter: createR2AdapterFactory({
+                  bucket: process.env.R2_BUCKET,
+                  endpoint: process.env.R2_ENDPOINT,
+                  accessKeyId: process.env.R2_ACCESS_KEY_ID,
+                  secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+                }),
                 prefix: 'media',
               },
-            },
-            bucket: process.env.R2_BUCKET,
-            config: {
-              credentials: {
-                accessKeyId: process.env.R2_ACCESS_KEY_ID,
-                secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-              },
-              region: 'auto',
-              endpoint: process.env.R2_ENDPOINT,
             },
           }),
         ]

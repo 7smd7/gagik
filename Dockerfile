@@ -69,6 +69,9 @@ RUN adduser --system --uid 1001 nextjs
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
+# Create media directory and give ownership to the runtime user
+RUN mkdir media
+RUN chown nextjs:nodejs media
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
@@ -90,4 +93,4 @@ ENV PORT=8374
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
 # Create an initial migration if none exist, run migrations, then start the server
-CMD ["sh", "-c", "cd /app && if [ ! -d ./src/migrations ] || [ -z \"$(ls -A ./src/migrations 2>/dev/null)\" ]; then PAYLOAD_CONFIG_PATH=src/payload.config.ts ./node_modules/.bin/payload migrate:create --skip-empty --force-accept-warning init; fi; PAYLOAD_CONFIG_PATH=src/payload.config.ts ./node_modules/.bin/payload migrate; HOSTNAME=0.0.0.0 node server.js"]
+CMD ["sh", "-c", "cd /app && PAYLOAD_CONFIG_PATH=src/payload.config.ts ./node_modules/.bin/payload migrate; HOSTNAME=0.0.0.0 node server.js"]
