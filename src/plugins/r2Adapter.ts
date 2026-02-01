@@ -12,8 +12,9 @@ export function createR2AdapterFactory(opts: {
   endpoint: string
   accessKeyId: string
   secretAccessKey: string
+  publicUrl?: string
 }) {
-  const { bucket, endpoint, accessKeyId, secretAccessKey } = opts
+  const { bucket, endpoint, accessKeyId, secretAccessKey, publicUrl } = opts
 
   const client = new S3Client({
     endpoint,
@@ -56,14 +57,18 @@ export function createR2AdapterFactory(opts: {
       },
       async generateURL({ filename }: { filename: string }) {
         if (!filename) return null
-        // Return a public URL (assumes bucket allows access). If private, could use signed URL instead.
+        // If public URL is configured, use it
+        if (publicUrl) {
+          return `${publicUrl.replace(/\/$/, '')}/${filename}`
+        }
+        // Otherwise generate signed URL (valid for 1 hour)
         try {
-          // try signed url (short lived) to be safe
           const command = new GetObjectCommand({ Bucket: bucket, Key: filename })
           const url = await getSignedUrl(client, command, { expiresIn: 3600 })
           return url
         } catch (e) {
-          return `${endpoint.replace(/\/$/, '')}/${bucket}/${filename}`
+          console.error('Failed to generate signed URL:', e)
+          return null
         }
       },
       // staticHandler: proxy the object through the server
