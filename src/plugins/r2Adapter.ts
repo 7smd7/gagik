@@ -12,9 +12,8 @@ export function createR2AdapterFactory(opts: {
   endpoint: string
   accessKeyId: string
   secretAccessKey: string
-  publicUrl?: string
 }) {
-  const { bucket, endpoint, accessKeyId, secretAccessKey, publicUrl } = opts
+  const { bucket, endpoint, accessKeyId, secretAccessKey } = opts
 
   const client = new S3Client({
     endpoint,
@@ -48,7 +47,7 @@ export function createR2AdapterFactory(opts: {
         await client.send(new PutObjectCommand({ Bucket: bucket, Key: key, Body, ContentType }))
 
         data.filename = key
-        data.url = `${endpoint.replace(/\/$/, '')}/${bucket}/${key}`
+        // Don't set data.url - let Payload's afterRead hook generate it
         return data
       },
       async handleDelete({ filename }: { filename: string }) {
@@ -57,14 +56,11 @@ export function createR2AdapterFactory(opts: {
       },
       async generateURL({ filename }: { filename: string }) {
         if (!filename) return null
-        // If public URL is configured, use it
-        if (publicUrl) {
-          return `${publicUrl.replace(/\/$/, '')}/${filename}`
-        }
-        // Otherwise generate signed URL (valid for 1 hour)
+        // Generate signed URL (valid for 24 hours) - provides secure access to individual files
+        // without making the entire bucket public
         try {
           const command = new GetObjectCommand({ Bucket: bucket, Key: filename })
-          const url = await getSignedUrl(client, command, { expiresIn: 3600 })
+          const url = await getSignedUrl(client, command, { expiresIn: 86400 }) // 24 hours
           return url
         } catch (e) {
           console.error('Failed to generate signed URL:', e)
