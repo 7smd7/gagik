@@ -37,6 +37,10 @@ ENV R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY}
 ENV R2_ENDPOINT=${R2_ENDPOINT}
 ENV R2_CUSTOM_DOMAIN=${R2_CUSTOM_DOMAIN}
 
+# Public environment variables (needed at build time for Next.js)
+ARG NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+
 # Disable Turbopack for production builds (Payload compatibility)
 ENV TURBOPACK=0
 

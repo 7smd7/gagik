@@ -9,6 +9,7 @@ services:
         - R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY:-}
         - R2_ENDPOINT=${R2_ENDPOINT:-}
         - R2_CUSTOM_DOMAIN=${R2_CUSTOM_DOMAIN:-}
+        - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-https://gagik.mohammaddaryani.dev}
     ports:
       - '8374:8374'
     depends_on:
