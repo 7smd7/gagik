@@ -12,8 +12,9 @@ export function createR2AdapterFactory(opts: {
   endpoint: string
   accessKeyId: string
   secretAccessKey: string
+  customDomain?: string
 }) {
-  const { bucket, endpoint, accessKeyId, secretAccessKey } = opts
+  const { bucket, endpoint, accessKeyId, secretAccessKey, customDomain } = opts
 
   const client = new S3Client({
     endpoint,
@@ -56,24 +57,31 @@ export function createR2AdapterFactory(opts: {
       },
       async generateURL({ filename }: { filename: string }) {
         if (!filename) return null
-        // Generate signed URL (valid for 24 hours) - provides secure access to individual files
-        // without making the entire bucket public
-        try {
-          const command = new GetObjectCommand({ Bucket: bucket, Key: filename })
-          const url = await getSignedUrl(client, command, { expiresIn: 86400 }) // 24 hours
-          return url
-        } catch (e) {
-          console.error('Failed to generate signed URL:', e)
-          return null
+        // Use custom domain for permanent public URLs (no expiry, no bucket listing)
+        if (customDomain) {
+          return `${customDomain.replace(/\/$/, '')}/${filename}`
         }
+        // If no custom domain, return null so Payload serves through its own API
+        return null
       },
       // staticHandler: proxy the object through the server
-      async staticHandler(req: any, args: any) {
-        const filename = (args && (args.filename || args.params?.filename)) || req.params?.filename
-        if (!filename) return
-        const command = new GetObjectCommand({ Bucket: bucket, Key: filename })
-        const res = await client.send(command)
-        return res.Body
+      async staticHandler(req: any, { params }: any) {
+        const filename = params?.filename || req.params?.filename
+        if (!filename) return null
+        
+        try {
+          const command = new GetObjectCommand({ Bucket: bucket, Key: filename })
+          const response = await client.send(command)
+          
+          // Return the stream properly for Payload to handle
+          return {
+            Body: response.Body,
+            ContentType: response.ContentType,
+          }
+        } catch (e) {
+          console.error('Failed to fetch file from R2:', e)
+          return null
+        }
       },
     }
   }
