@@ -1,6 +1,4 @@
 import { ImageResponse } from 'next/og'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
 
 export const runtime = 'edge'
 export const alt = 'Gagik Harutyunyan'
@@ -10,27 +8,10 @@ export const size = {
 }
 export const contentType = 'image/png'
 
-export default async function Image({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale: _local } = await params
-  const locale = _local === 'am' ? 'hy' : _local
-  const payload = await getPayload({ config: configPromise })
-
-  const localeCode = locale as 'en' | 'hy' | 'ru'
-
-  // Fetch home page to get the title
-  const pages = await payload.find({
-    collection: 'pages',
-    where: {
-      slug: {
-        equals: 'home',
-      },
-    },
-    locale: localeCode,
-    limit: 1,
-  })
-
-  const page = pages.docs[0]
-  const title = page?.title || 'GAGIK HARUTYUNYAN'
+// Edge-compatible OG image generator. Provide `title` as a query param.
+export default function Image(req: Request) {
+  const url = new URL(req.url)
+  const title = url.searchParams.get('title') || 'Gagik Harutyunyan'
 
   return new ImageResponse(
     <div

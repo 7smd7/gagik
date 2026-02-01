@@ -84,7 +84,9 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
       description: 'Explore the works and artistic journey of Gagik Harutyunyan.',
       images: [
         {
-          url: `${siteUrl}/${locale}/opengraph-image`,
+          url: `${siteUrl}/${locale}/opengraph-image?title=${encodeURIComponent(
+            'Gagik Harutyunyan — Artist',
+          )}`,
           width: 1200,
           height: 630,
           alt: 'Gagik Harutyunyan',
@@ -95,7 +97,11 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
       card: 'summary_large_image',
       title: 'Gagik Harutyunyan — Artist',
       description: 'Explore the works and artistic journey of Gagik Harutyunyan.',
-      images: [`${siteUrl}/${locale}/opengraph-image`],
+      images: [
+        `${siteUrl}/${locale}/opengraph-image?title=${encodeURIComponent(
+          'Gagik Harutyunyan — Artist',
+        )}`,
+      ],
     },
     alternates: {
       canonical: `${siteUrl}/${locale}`,

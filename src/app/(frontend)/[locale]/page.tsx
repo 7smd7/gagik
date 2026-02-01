@@ -48,7 +48,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const seoKeywords = page.seo?.metaKeywords || 'Gagik Harutyunyan, artist, contemporary art'
 
   // Handle OG image
-  let ogImageUrl = `${siteUrl}/${locale}/opengraph-image`
+  // Use the dynamic opengraph-image route and pass the title as query param
+  let ogImageUrl = `${siteUrl}/${locale}/opengraph-image?title=${encodeURIComponent(seoTitle)}`
   if (page.seo?.ogImage) {
     const ogImage = page.seo.ogImage as Media
     if (typeof ogImage === 'object' && ogImage.url) {
