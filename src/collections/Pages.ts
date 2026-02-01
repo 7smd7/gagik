@@ -55,6 +55,60 @@ export const Pages: CollectionConfig = {
       },
     },
     {
+      name: 'seo',
+      type: 'group',
+      label: 'SEO Settings',
+      fields: [
+        {
+          name: 'metaTitle',
+          type: 'text',
+          label: 'Meta Title',
+          localized: true,
+          admin: {
+            description:
+              'SEO title (defaults to page title if empty). Recommended: 50-60 characters',
+          },
+        },
+        {
+          name: 'metaDescription',
+          type: 'textarea',
+          label: 'Meta Description',
+          localized: true,
+          admin: {
+            description: 'SEO description. Recommended: 150-160 characters',
+          },
+        },
+        {
+          name: 'metaKeywords',
+          type: 'text',
+          label: 'Keywords',
+          localized: true,
+          admin: {
+            description: 'Comma-separated keywords',
+          },
+        },
+        {
+          name: 'ogImage',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Open Graph Image',
+          admin: {
+            description:
+              'Custom image for social media sharing. Recommended: 1200x630px. Leave empty to use auto-generated image.',
+          },
+        },
+        {
+          name: 'noIndex',
+          type: 'checkbox',
+          label: 'No Index',
+          defaultValue: false,
+          admin: {
+            description: 'Prevent search engines from indexing this page',
+          },
+        },
+      ],
+    },
+    {
       name: 'layout',
       type: 'blocks',
       blocks: [

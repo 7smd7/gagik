@@ -37,6 +37,7 @@ import { Press } from './collections/Press'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { TranslationSettings } from './globals/TranslationSettings'
+import { SiteSettings } from './globals/SiteSettings'
 import { translationPlugin } from './plugins/translationPlugin'
 
 const filename = fileURLToPath(import.meta.url)
@@ -68,7 +69,7 @@ export default buildConfig({
     fallback: true,
   },
   collections: [Users, Media, Pages, Works, Series, Press],
-  globals: [Header, Footer, TranslationSettings],
+  globals: [Header, Footer, TranslationSettings, SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -99,11 +99,13 @@ export interface Config {
     header: Header;
     footer: Footer;
     'translation-settings': TranslationSetting;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     'translation-settings': TranslationSettingsSelect<false> | TranslationSettingsSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: 'en' | 'hy' | 'ru';
   user: User & {
@@ -186,6 +188,28 @@ export interface Page {
    * URL slug for the page
    */
   slug: string;
+  seo?: {
+    /**
+     * SEO title (defaults to page title if empty). Recommended: 50-60 characters
+     */
+    metaTitle?: string | null;
+    /**
+     * SEO description. Recommended: 150-160 characters
+     */
+    metaDescription?: string | null;
+    /**
+     * Comma-separated keywords
+     */
+    metaKeywords?: string | null;
+    /**
+     * Custom image for social media sharing. Recommended: 1200x630px. Leave empty to use auto-generated image.
+     */
+    ogImage?: (number | null) | Media;
+    /**
+     * Prevent search engines from indexing this page
+     */
+    noIndex?: boolean | null;
+  };
   layout?:
     | (
         | {
@@ -527,6 +551,15 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        metaKeywords?: T;
+        ogImage?: T;
+        noIndex?: T;
+      };
   layout?:
     | T
     | {
@@ -762,6 +795,72 @@ export interface TranslationSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * The name of your website
+   */
+  siteName: string;
+  /**
+   * The base URL of your website (without trailing slash)
+   */
+  siteUrl: string;
+  /**
+   * Default site description for SEO
+   */
+  siteDescription: string;
+  /**
+   * Default Open Graph image for pages without custom images. Recommended: 1200x630px
+   */
+  defaultOgImage?: (number | null) | Media;
+  /**
+   * Your Twitter/X handle (e.g., @username)
+   */
+  twitterHandle?: string | null;
+  /**
+   * Your social media profiles for structured data
+   */
+  socialLinks?:
+    | {
+        platform: 'instagram' | 'facebook' | 'twitter' | 'linkedin' | 'youtube' | 'tiktok' | 'other';
+        /**
+         * Full URL to your social media profile
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Your Microsoft Clarity tracking ID
+   */
+  clarityId?: string | null;
+  /**
+   * Your Google Analytics tracking ID (e.g., G-XXXXXXXXXX)
+   */
+  googleAnalyticsId?: string | null;
+  /**
+   * Additional scripts to inject into the <head> tag
+   */
+  customScripts?: string | null;
+  /**
+   * Schema.org type for structured data
+   */
+  organizationType?: ('Person' | 'Organization' | 'LocalBusiness') | null;
+  /**
+   * Contact email for structured data
+   */
+  email?: string | null;
+  /**
+   * Job title or profession (for Person type)
+   */
+  jobTitle?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -813,6 +912,33 @@ export interface TranslationSettingsSelect<T extends boolean = true> {
   showRussian?: T;
   localeHelp?: T;
   enableTranslation?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  siteName?: T;
+  siteUrl?: T;
+  siteDescription?: T;
+  defaultOgImage?: T;
+  twitterHandle?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  clarityId?: T;
+  googleAnalyticsId?: T;
+  customScripts?: T;
+  organizationType?: T;
+  email?: T;
+  jobTitle?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

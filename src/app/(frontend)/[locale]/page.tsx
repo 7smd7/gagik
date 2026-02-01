@@ -1,7 +1,7 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
-import type { Page, Work, Series, Press } from '@/payload-types'
+import type { Page, Work, Series, Press, Media } from '@/payload-types'
 import Hero from '@/components/hero/HomeHero'
 import Biography from '@/components/biography/Biography'
 import WorksGallery from '@/components/works/WorksGallery'
@@ -9,11 +9,88 @@ import SeriesGallery from '@/components/series/SeriesGallery'
 import PressGallery from '@/components/press/PressGallery'
 import ScrollSpacer from '@/components/layout/ScrollSpacer'
 import HashScroller from '@/components/layout/HashScroller'
+import type { Metadata } from 'next'
 
 interface PageProps {
   params: Promise<{
     locale: string
   }>
+}
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gagikharutyunyan.com'
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale: _local } = await params
+  const locale = _local === 'am' ? 'hy' : _local
+  const payload = await getPayload({ config: configPromise })
+  const localeCode = locale as 'en' | 'hy' | 'ru'
+
+  const pages = await payload.find({
+    collection: 'pages',
+    where: {
+      slug: {
+        equals: 'home',
+      },
+    },
+    locale: localeCode,
+    limit: 1,
+  })
+
+  const page = pages.docs[0] as Page | undefined
+
+  if (!page) {
+    return {}
+  }
+
+  const seoTitle = page.seo?.metaTitle || page.title || 'Gagik Harutyunyan — Artist'
+  const seoDescription =
+    page.seo?.metaDescription || 'Explore the works and artistic journey of Gagik Harutyunyan.'
+  const seoKeywords = page.seo?.metaKeywords || 'Gagik Harutyunyan, artist, contemporary art'
+
+  // Handle OG image
+  let ogImageUrl = `${siteUrl}/${locale}/opengraph-image`
+  if (page.seo?.ogImage) {
+    const ogImage = page.seo.ogImage as Media
+    if (typeof ogImage === 'object' && ogImage.url) {
+      ogImageUrl = ogImage.url
+    }
+  }
+
+  const robots = page.seo?.noIndex
+    ? {
+        index: false,
+        follow: false,
+      }
+    : {
+        index: true,
+        follow: true,
+      }
+
+  return {
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+    robots,
+    openGraph: {
+      title: seoTitle,
+      description: seoDescription,
+      url: `${siteUrl}/${locale}`,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: seoTitle,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: seoTitle,
+      description: seoDescription,
+      images: [ogImageUrl],
+    },
+  }
 }
 
 export default async function PageComponent({ params }: PageProps) {
