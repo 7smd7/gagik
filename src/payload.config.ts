@@ -1,6 +1,16 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { s3Storage } from '@payloadcms/plugin-cloud-storage/s3'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+let s3Storage: any | undefined
+try {
+  // require at runtime to avoid static bundler resolution errors during Next/Turbopack build
+  // the module may not be present in some environments
+
+  s3Storage = require('@payloadcms/plugin-cloud-storage/s3')?.s3Storage
+} catch (e) {
+  s3Storage = undefined
+}
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -62,8 +72,9 @@ export default buildConfig({
   sharp,
   plugins: [
     translationPlugin(),
-    // Only use R2 storage when credentials are configured
-    ...(process.env.R2_BUCKET &&
+    // Only use R2 storage when credentials are configured and plugin is available
+    ...(s3Storage &&
+    process.env.R2_BUCKET &&
     process.env.R2_ACCESS_KEY_ID &&
     process.env.R2_SECRET_ACCESS_KEY &&
     process.env.R2_ENDPOINT
