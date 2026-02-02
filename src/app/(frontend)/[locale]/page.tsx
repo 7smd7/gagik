@@ -25,6 +25,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const payload = await getPayload({ config: configPromise })
   const localeCode = locale as 'en' | 'hy' | 'ru'
 
+  // Fetch site settings so we can use the site's default OG image when page doesn't provide one
+  const siteSettings = await payload.findGlobal({
+    slug: 'site-settings',
+    locale: localeCode,
+    depth: 1,
+  })
+
   const pages = await payload.find({
     collection: 'pages',
     where: {
@@ -48,8 +55,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const seoKeywords = page.seo?.metaKeywords || 'Gagik Harutyunyan, artist, contemporary art'
 
   // Handle OG image
-  // Use the dynamic opengraph-image route and pass the title as query param
-  let ogImageUrl = `${siteUrl}/${locale}/opengraph-image?title=${encodeURIComponent(seoTitle)}`
+  let ogImageUrl: string | undefined
+
+  // Prefer site-level default OG image when present
+  const maybeDefaultOg = siteSettings?.defaultOgImage as any
+  if (maybeDefaultOg && typeof maybeDefaultOg === 'object' && maybeDefaultOg.url) {
+    ogImageUrl = maybeDefaultOg.url
+  } else if (typeof maybeDefaultOg === 'string' || typeof maybeDefaultOg === 'number') {
+    try {
+      const mediaDoc = await payload.findByID({
+        collection: 'media',
+        id: maybeDefaultOg,
+      })
+      if (mediaDoc && typeof mediaDoc === 'object' && (mediaDoc as any).url) {
+        ogImageUrl = (mediaDoc as any).url
+      }
+    } catch {
+      // ignore lookup errors and keep fallback undefined
+    }
+  }
+
+  // If the page has an explicit OG image, prefer that
   if (page.seo?.ogImage) {
     const ogImage = page.seo.ogImage as Media
     if (typeof ogImage === 'object' && ogImage.url) {
@@ -76,20 +102,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: seoTitle,
       description: seoDescription,
       url: `${siteUrl}/${locale}`,
-      images: [
-        {
-          url: ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: seoTitle,
-        },
-      ],
+      ...(ogImageUrl
+        ? {
+            images: [
+              {
+                url: ogImageUrl,
+                width: 1200,
+                height: 630,
+                alt: seoTitle,
+              },
+            ],
+          }
+        : {}),
     },
     twitter: {
       card: 'summary_large_image',
       title: seoTitle,
       description: seoDescription,
-      images: [ogImageUrl],
+      ...(ogImageUrl ? { images: [ogImageUrl] } : {}),
     },
   }
 }

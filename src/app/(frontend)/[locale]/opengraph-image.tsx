@@ -1,6 +1,8 @@
 import { ImageResponse } from 'next/og'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 export const alt = 'Gagik Harutyunyan'
 export const size = {
   width: 1200,
@@ -8,10 +10,44 @@ export const size = {
 }
 export const contentType = 'image/png'
 
-// Edge-compatible OG image generator. Provide `title` as a query param.
-export default function Image(req: Request) {
-  const url = new URL(req.url)
-  const title = url.searchParams.get('title') || 'Gagik Harutyunyan'
+// OG image generator. Provide `title` as a query param.
+export default async function Image({
+  params,
+  searchParams,
+}: {
+  params: { locale?: string }
+  searchParams?: { title?: string }
+}) {
+  const title = searchParams?.title || 'Gagik Harutyunyan'
+
+  // Try to redirect to the Site Settings default OG image if set
+  try {
+    const locale = params?.locale === 'am' ? 'hy' : params?.locale
+
+    const payload = await getPayload({ config: configPromise })
+    const siteSettings = await payload.findGlobal({
+      slug: 'site-settings',
+      locale: (locale || 'en') as 'en' | 'hy' | 'ru',
+      depth: 1,
+    })
+
+    const maybeDefaultOg = (siteSettings as any)?.defaultOgImage
+    if (maybeDefaultOg && typeof maybeDefaultOg === 'object' && maybeDefaultOg.url) {
+      return Response.redirect(maybeDefaultOg.url, 302)
+    }
+
+    if (typeof maybeDefaultOg === 'string' || typeof maybeDefaultOg === 'number') {
+      const mediaDoc = await payload.findByID({
+        collection: 'media',
+        id: maybeDefaultOg,
+      })
+      if (mediaDoc && typeof mediaDoc === 'object' && (mediaDoc as any).url) {
+        return Response.redirect((mediaDoc as any).url, 302)
+      }
+    }
+  } catch {
+    // ignore and fall back to dynamic image
+  }
 
   return new ImageResponse(
     <div

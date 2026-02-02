@@ -43,6 +43,31 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gagikharutyunyan.co
 export async function generateMetadata({ params }: LayoutProps): Promise<Metadata> {
   const { locale } = await params
   const normalizedLocale = locale === 'am' ? 'hy' : locale
+  const payload = await getPayload({ config: configPromise })
+  const siteSettings = await payload.findGlobal({
+    slug: 'site-settings',
+    locale: normalizedLocale as 'en' | 'hy' | 'ru',
+    depth: 1,
+  })
+
+  // Prefer the site-level default OG image when available
+  let defaultOgUrl: string | undefined
+  const maybeDefaultOg = siteSettings?.defaultOgImage as any
+  if (maybeDefaultOg && typeof maybeDefaultOg === 'object' && maybeDefaultOg.url) {
+    defaultOgUrl = maybeDefaultOg.url
+  } else if (typeof maybeDefaultOg === 'string' || typeof maybeDefaultOg === 'number') {
+    try {
+      const mediaDoc = await payload.findByID({
+        collection: 'media',
+        id: maybeDefaultOg,
+      })
+      if (mediaDoc && typeof mediaDoc === 'object' && (mediaDoc as any).url) {
+        defaultOgUrl = (mediaDoc as any).url
+      }
+    } catch {
+      // ignore lookup errors and keep fallback undefined
+    }
+  }
 
   const localeNames: Record<string, string> = {
     en: 'en_US',
@@ -82,26 +107,24 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
       siteName: 'Gagik Harutyunyan',
       title: 'Gagik Harutyunyan — Artist',
       description: 'Explore the works and artistic journey of Gagik Harutyunyan.',
-      images: [
-        {
-          url: `${siteUrl}/${locale}/opengraph-image?title=${encodeURIComponent(
-            'Gagik Harutyunyan — Artist',
-          )}`,
-          width: 1200,
-          height: 630,
-          alt: 'Gagik Harutyunyan',
-        },
-      ],
+      ...(defaultOgUrl
+        ? {
+            images: [
+              {
+                url: defaultOgUrl,
+                width: 1200,
+                height: 630,
+                alt: 'Gagik Harutyunyan',
+              },
+            ],
+          }
+        : {}),
     },
     twitter: {
       card: 'summary_large_image',
       title: 'Gagik Harutyunyan — Artist',
       description: 'Explore the works and artistic journey of Gagik Harutyunyan.',
-      images: [
-        `${siteUrl}/${locale}/opengraph-image?title=${encodeURIComponent(
-          'Gagik Harutyunyan — Artist',
-        )}`,
-      ],
+      ...(defaultOgUrl ? { images: [defaultOgUrl] } : {}),
     },
     alternates: {
       canonical: `${siteUrl}/${locale}`,
