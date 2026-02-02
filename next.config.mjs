@@ -9,6 +9,15 @@ const nextConfig = {
       bodySizeLimit: 52428800,
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'files.mohammaddaryani.dev',
+        pathname: '/media/**',
+      },
+    ],
+  },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],
