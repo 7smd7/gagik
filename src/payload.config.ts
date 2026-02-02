@@ -27,6 +27,7 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { resendAdapter } from '@payloadcms/email-resend'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -71,6 +72,14 @@ export default buildConfig({
   collections: [Users, Media, Pages, Works, Series, Press],
   globals: [Header, Footer, TranslationSettings, SiteSettings],
   editor: lexicalEditor(),
+  email:
+    process.env.RESEND_API_KEY && process.env.RESEND_FROM
+      ? resendAdapter({
+          apiKey: process.env.RESEND_API_KEY,
+          defaultFromAddress: process.env.RESEND_FROM,
+          defaultFromName: 'Gagik',
+        })
+      : undefined,
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

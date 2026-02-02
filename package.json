@@ -26,6 +26,7 @@
     "@payloadcms/db-postgres": "3.68.4",
     "@payloadcms/next": "3.68.4",
     "@payloadcms/plugin-cloud-storage": "3.68.4",
+    "@payloadcms/email-resend": "3.68.4",
     "@payloadcms/richtext-lexical": "3.68.4",
     "@payloadcms/ui": "3.68.4",
     "autoprefixer": "^10.4.23",
@@ -40,6 +41,7 @@
     "postcss": "^8.5.6",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "resend": "^4.0.1",
     "sharp": "0.34.2",
     "tailwindcss": "^4.1.18"
   },
