@@ -1,67 +1,179 @@
-# Payload Blank Template
+# Gagik Harutyunyan Portfolio
 
-This template comes configured with the bare minimum to get started on anything you need.
+A multilingual portfolio website for artist Gagik Harutyunyan, built with Next.js, Payload CMS, and PostgreSQL.
 
-## Quick start
+## Tech Stack
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+- **Framework**: Next.js 16.1 (App Router, standalone output)
+- **CMS**: Payload CMS 3.68.4 with `@payloadcms/db-postgres`
+- **Database**: PostgreSQL 16
+- **Storage**: Cloudflare R2 (via custom adapter)
+- **Email**: Resend
+- **Deployment**: Docker + Docker Compose (Coolify)
+- **Locales**: English (en), Armenian (hy), Russian (ru)
 
-## Quick Start - local setup
+## Features
 
-To spin up this template locally, follow these steps:
+- 🌍 **Multilingual** content (en/hy/ru) with locale-aware routing
+- 🎨 **Collections**: Works, Series, Press, Pages, Media
+- 🌐 **Globals**: Site Settings (SEO defaults, social links, analytics), Header, Footer
+- 📸 **Media Storage**: R2-backed uploads with custom domain support
+- 🔍 **SEO**: Per-page metadata, Open Graph images, structured data
+- 📧 **Email**: Resend adapter for transactional emails
+- 🚀 **CI/CD**: Automatic migrations on container startup
 
-### Clone
+## Local Development
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+### Prerequisites
 
-### Development
+- Docker & Docker Compose
+- Node.js 18+ (for local dev without Docker)
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URI` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+### Setup
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+1. **Clone the repository**
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+   ```bash
+   git clone <repo-url>
+   cd gagik
+   ```
 
-#### Docker (Optional)
+2. **Create environment file**
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+   ```bash
+   cp .env.example .env
+   ```
 
-To do so, follow these steps:
+   Fill in required values:
+   - `POSTGRES_*` — Postgres credentials
+   - `PAYLOAD_SECRET` — secret for JWT signing
+   - `R2_*` — Cloudflare R2 bucket credentials
+   - `RESEND_API_KEY` and `RESEND_FROM` — email adapter
+   - `NEXT_PUBLIC_SITE_URL` — site base URL
 
-- Modify the `MONGODB_URI` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URI` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+3. **Start services**
 
-## How it works
+   ```bash
+   docker compose up -d
+   ```
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+   The app will be available at `http://localhost:8374` (or the port in `docker-compose.yml`).
+
+4. **Run migrations** (if not auto-applied)
+
+   ```bash
+   docker compose run --rm app sh -c "PAYLOAD_CONFIG_PATH=src/payload.config.ts ./node_modules/.bin/payload migrate"
+   ```
+
+5. **Create admin user**
+   Visit `/admin` and create your first user.
+
+### Development without Docker
+
+If you prefer running locally with a standalone Postgres instance:
+
+```bash
+npm install
+npm run dev
+```
+
+Ensure `POSTGRES_*` env vars point to your local DB.
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── (frontend)/[locale]/    # Public-facing pages (multilingual)
+│   ├── (payload)/              # Payload admin UI
+│   └── api/                    # Custom API routes
+├── collections/                # Payload collections (Works, Series, etc.)
+├── globals/                    # Payload globals (SiteSettings, Header, Footer)
+├── components/                 # React components (Hero, Gallery, etc.)
+├── migrations/                 # DB migrations
+├── plugins/                    # Custom Payload plugins (R2 adapter, translations)
+└── styles/                     # Global CSS
+```
+
+## Deployment
+
+The project uses Docker for deployment. The `Dockerfile` builds a Next.js standalone image and runs migrations on startup.
+
+### Build & Deploy
+
+1. **Build the image**
+
+   ```bash
+   docker compose build app
+   ```
+
+2. **Push to your registry** (if using remote deployment)
+
+   ```bash
+   docker tag gagik-app:latest <registry>/gagik-app:latest
+   docker push <registry>/gagik-app:latest
+   ```
+
+3. **Deploy** (Coolify or any Docker host)
+   - Ensure all environment variables are set in your hosting platform
+   - The container will automatically run `payload migrate` on startup
+   - Expose port `8374` (or configure via `docker-compose.yml`)
+
+### Migrations
+
+Payload migrations are stored in `src/migrations/` and registered in `src/migrations/index.ts`.
+
+- **Create a new migration**:
+  ```bash
+  docker compose run --rm app sh -c "PAYLOAD_CONFIG_PATH=src/payload.config.ts ./node_modules/.bin/payload migrate:create"
+  ```
+- **Run migrations**:
+  ```bash
+  docker compose run --rm app sh -c "PAYLOAD_CONFIG_PATH=src/payload.config.ts ./node_modules/.bin/payload migrate"
+  ```
+- **Check status**:
+  ```bash
+  docker compose run --rm app sh -c "PAYLOAD_CONFIG_PATH=src/payload.config.ts ./node_modules/.bin/payload migrate:status"
+  ```
+
+## Configuration
+
+### Site Settings (Admin → Globals → Site Settings)
+
+- **General**: Site name, URL, description (localized)
+- **SEO Defaults**: Default OG image, Twitter handle
+- **Social Links**: Instagram, Facebook, etc.
+- **Analytics**: Google Analytics, Clarity, custom scripts
+- **Structured Data**: Organization type, contact info
 
 ### Collections
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+- **Pages**: Flexible page builder with Hero, Biography blocks
+- **Works**: Artist works with title, year, images, dimensions (localized)
+- **Series**: Work series/collections (localized)
+- **Press**: Press mentions/articles (localized)
+- **Media**: R2-backed uploads with custom domain
 
-- #### Users (Authentication)
+## Environment Variables
 
-  Users are auth-enabled collections that have access to the admin panel.
+| Variable               | Description                                                 |
+| ---------------------- | ----------------------------------------------------------- |
+| `POSTGRES_HOST`        | Postgres hostname                                           |
+| `POSTGRES_PORT`        | Postgres port (default: 5432)                               |
+| `POSTGRES_USER`        | Postgres user                                               |
+| `POSTGRES_PASSWORD`    | Postgres password                                           |
+| `POSTGRES_DB`          | Postgres database name                                      |
+| `PAYLOAD_SECRET`       | Secret for JWT signing                                      |
+| `PAYLOAD_CONFIG_PATH`  | Path to payload config (default: `src/payload.config.ts`)   |
+| `R2_BUCKET`            | Cloudflare R2 bucket name                                   |
+| `R2_ACCESS_KEY_ID`     | R2 access key                                               |
+| `R2_SECRET_ACCESS_KEY` | R2 secret key                                               |
+| `R2_ENDPOINT`          | R2 endpoint URL                                             |
+| `R2_CUSTOM_DOMAIN`     | Custom domain for media (e.g., `https://files.example.com`) |
+| `RESEND_API_KEY`       | Resend API key                                              |
+| `RESEND_FROM`          | From email address                                          |
+| `NEXT_PUBLIC_SITE_URL` | Public site URL (used for metadata, OG images)              |
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+## License
 
-- #### Media
-
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
-
-### Docker
-
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
-
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
-
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
-
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+Proprietary — All rights reserved.
