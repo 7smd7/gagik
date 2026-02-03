@@ -112,7 +112,7 @@ export default function HeaderClient({ logo, name, navItems }: HeaderClientProps
               </Link>
             </>
           )}
-          <LanguageSwitcher />
+          <LanguageSwitcher isScrolled={isScrolled} />
         </nav>
 
         {/* Mobile Menu Button */}

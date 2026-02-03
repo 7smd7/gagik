@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 
 interface Locale {
   code: string
@@ -9,7 +10,7 @@ interface Locale {
   name: string
 }
 
-export default function LanguageSwitcher() {
+export default function LanguageSwitcher({ isScrolled = false }: { isScrolled?: boolean }) {
   const router = useRouter()
   const pathname = usePathname()
   const [locales, setLocales] = useState<Locale[] | null>(null)
@@ -38,33 +39,49 @@ export default function LanguageSwitcher() {
     router.push(newPathname)
   }
 
+  const activeColor = isScrolled ? '#000000' : '#ffffff'
+  const inactiveColor = isScrolled ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.4)'
+
+  // Debug: log when isScrolled changes locally to verify prop passing
+  useEffect(() => {
+    console.debug('LanguageSwitcher isScrolled:', isScrolled, 'activeColor:', activeColor)
+  }, [isScrolled, activeColor])
+
   if (!locales) {
     return (
       <div className="flex space-x-2">
-        <button
-          className={'text-sm font-sans uppercase text-white  hover:text-white'}
+        <motion.button
+          className="text-sm font-sans uppercase"
           title={currentLocale}
+          initial={{ color: activeColor }}
+          animate={{ color: activeColor }}
+          transition={{ duration: 0.3 }}
         >
           {currentLocale}
-        </button>
+        </motion.button>
       </div>
     )
   }
 
   return (
     <div className="flex space-x-2">
-      {locales.map((locale) => (
-        <button
-          key={locale.code}
-          onClick={() => handleLocaleChange(locale.code)}
-          className={`text-sm font-sans uppercase ${
-            currentLocale === locale.code ? 'text-white' : 'text-white/40 hover:text-white'
-          }`}
-          title={locale.name}
-        >
-          {locale.label}
-        </button>
-      ))}
+      {locales.map((locale) => {
+        const isActive = currentLocale === locale.code
+        return (
+          <motion.button
+            key={locale.code}
+            onClick={() => handleLocaleChange(locale.code)}
+            className="text-sm font-sans uppercase"
+            initial={{ color: isActive ? activeColor : inactiveColor }}
+            animate={{ color: isActive ? activeColor : inactiveColor }}
+            whileHover={{ color: activeColor }}
+            transition={{ duration: 0.3 }}
+            title={locale.name}
+          >
+            {locale.label}
+          </motion.button>
+        )
+      })}
     </div>
   )
 }
