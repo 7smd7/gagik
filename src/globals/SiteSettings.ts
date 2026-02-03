@@ -42,6 +42,24 @@ export const SiteSettings: GlobalConfig = {
                 description: 'Default site description for SEO',
               },
             },
+            {
+              name: 'favicon',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Favicon',
+              admin: {
+                description: 'Favicon file (ICO or PNG). Will be used for site icon.',
+              },
+            },
+            {
+              name: 'appleTouchIcon',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Apple Touch Icon',
+              admin: {
+                description: 'Apple touch icon (PNG, e.g. 180x180).',
+              },
+            },
           ],
         },
         {

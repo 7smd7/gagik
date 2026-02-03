@@ -146,12 +146,42 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   const siteSettings = await payload.findGlobal({
     slug: 'site-settings',
     locale: normalizedLocale as 'en' | 'hy' | 'ru',
+    depth: 1,
   })
+
+  // Resolve favicon and apple touch icon URLs (support relation object or id)
+  let faviconUrl: string | undefined
+  let appleTouchUrl: string | undefined
+  const maybeFavicon = (siteSettings as any)?.favicon
+  const maybeApple = (siteSettings as any)?.appleTouchIcon
+  if (maybeFavicon) {
+    if (typeof maybeFavicon === 'object' && maybeFavicon.url) faviconUrl = maybeFavicon.url
+    else if (typeof maybeFavicon === 'string' || typeof maybeFavicon === 'number') {
+      try {
+        const mediaDoc = await payload.findByID({ collection: 'media', id: maybeFavicon })
+        if (mediaDoc && (mediaDoc as any).url) faviconUrl = (mediaDoc as any).url
+      } catch {}
+    }
+  }
+  if (maybeApple) {
+    if (typeof maybeApple === 'object' && maybeApple.url) appleTouchUrl = maybeApple.url
+    else if (typeof maybeApple === 'string' || typeof maybeApple === 'number') {
+      try {
+        const mediaDoc = await payload.findByID({ collection: 'media', id: maybeApple })
+        if (mediaDoc && (mediaDoc as any).url) appleTouchUrl = (mediaDoc as any).url
+      } catch {}
+    }
+  }
 
   return (
     <html lang={locale} className={`${inter.variable} ${playfair.variable} ${oswald.variable}`}>
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        {faviconUrl ? (
+          <link rel="icon" href={faviconUrl} />
+        ) : (
+          <link rel="icon" href="/favicon.ico" />
+        )}
+        {appleTouchUrl && <link rel="apple-touch-icon" href={appleTouchUrl} />}
         <Analytics
           clarityId={siteSettings?.clarityId}
           googleAnalyticsId={siteSettings?.googleAnalyticsId}
