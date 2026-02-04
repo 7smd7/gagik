@@ -10,12 +10,18 @@ interface Locale {
   name: string
 }
 
-export default function LanguageSwitcher({ isScrolled = false }: { isScrolled?: boolean }) {
+export default function LanguageSwitcher({
+  isScrolled = false,
+  initialLocale,
+}: {
+  isScrolled?: boolean
+  initialLocale?: string
+}) {
   const router = useRouter()
   const pathname = usePathname()
   const [locales, setLocales] = useState<Locale[] | null>(null)
 
-  const currentLocale = pathname.split('/')[1] || 'en' // Extract current locale from path
+  const currentLocale = (pathname ? pathname.split('/')[1] : initialLocale) || 'en' // Extract current locale from path or use initialLocale
 
   useEffect(() => {
     fetch('/api/locales')
@@ -66,7 +72,8 @@ export default function LanguageSwitcher({ isScrolled = false }: { isScrolled?: 
   return (
     <div className="flex space-x-2">
       {locales.map((locale) => {
-        const isActive = currentLocale === locale.code
+        const isActive =
+          currentLocale === locale.code || (currentLocale === 'am' && locale.code === 'hy')
         return (
           <motion.button
             key={locale.code}
