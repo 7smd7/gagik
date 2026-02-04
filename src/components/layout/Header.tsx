@@ -21,5 +21,7 @@ export default async function Header({ locale = 'en' }: HeaderProps) {
     link: item.link || '#',
   }))
 
-  return <HeaderClient logo={header?.logo} name={header?.name} navItems={navItems} />
+  return (
+    <HeaderClient logo={header?.logo} name={header?.name} navItems={navItems} locale={locale} />
+  )
 }

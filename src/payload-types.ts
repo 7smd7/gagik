@@ -812,6 +812,14 @@ export interface SiteSetting {
    */
   siteDescription: string;
   /**
+   * Favicon file (ICO or PNG). Will be used for site icon.
+   */
+  favicon?: (number | null) | Media;
+  /**
+   * Apple touch icon (PNG, e.g. 180x180).
+   */
+  appleTouchIcon?: (number | null) | Media;
+  /**
    * Default Open Graph image for pages without custom images. Recommended: 1200x630px
    */
   defaultOgImage?: (number | null) | Media;
@@ -924,6 +932,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   siteName?: T;
   siteUrl?: T;
   siteDescription?: T;
+  favicon?: T;
+  appleTouchIcon?: T;
   defaultOgImage?: T;
   twitterHandle?: T;
   socialLinks?:

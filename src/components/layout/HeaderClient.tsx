@@ -16,9 +16,10 @@ interface HeaderClientProps {
   logo?: (number | null) | Media
   name?: string | null
   navItems: NavItem[]
+  locale?: string
 }
 
-export default function HeaderClient({ logo, name, navItems }: HeaderClientProps) {
+export default function HeaderClient({ logo, name, navItems, locale = 'en' }: HeaderClientProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const { scrollY } = useScroll()
@@ -68,19 +69,29 @@ export default function HeaderClient({ logo, name, navItems }: HeaderClientProps
         {/* Navigation */}
         <nav className="hidden md:flex items-center gap-10">
           {navItems.length > 0 ? (
-            navItems.map((item, i: number) => (
-              <Link key={i} href={item.link || '#'}>
-                <motion.span
-                  className="text-xs font-sans uppercase tracking-[0.15em] hover:opacity-60 transition-opacity"
-                  animate={{
-                    color: isScrolled ? '#000000' : '#ffffff',
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {item.label}
-                </motion.span>
-              </Link>
-            ))
+            navItems.map((item, i: number) => {
+              const buildHref = (link: string) => {
+                if (!link) return `/${locale}`
+                if (link.startsWith('http')) return link
+                if (link.startsWith('/')) return `/${locale}${link}`
+                if (link.startsWith('#')) return `/${locale}${link}`
+                return `/${locale}/${link.replace(/^\/+/, '')}`
+              }
+
+              return (
+                <Link key={i} href={buildHref(item.link || '#')}>
+                  <motion.span
+                    className="text-xs font-sans uppercase tracking-[0.15em] hover:opacity-60 transition-opacity"
+                    animate={{
+                      color: isScrolled ? '#000000' : '#ffffff',
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {item.label}
+                  </motion.span>
+                </Link>
+              )
+            })
           ) : (
             <>
               <Link href="#Works">
@@ -112,7 +123,7 @@ export default function HeaderClient({ logo, name, navItems }: HeaderClientProps
               </Link>
             </>
           )}
-          <LanguageSwitcher isScrolled={isScrolled} />
+          <LanguageSwitcher isScrolled={isScrolled} initialLocale={locale} />
         </nav>
 
         {/* Mobile Menu Button */}
