@@ -61,13 +61,15 @@ export default function WorksGallery({ works, locale }: WorksGalleryProps) {
     const handleResize = () => {
       if (typeof window !== 'undefined') {
         let columnsPerRow = 3
+        let initialRows = 2
         if (window.innerWidth < 640) {
           columnsPerRow = 1
+          initialRows = 3 // Show 3 items on mobile
         } else if (window.innerWidth < 1024) {
           columnsPerRow = 2
         }
         setItemsPerRow(columnsPerRow)
-        setItemsToShow(columnsPerRow * 2) // 2 rows initially
+        setItemsToShow(columnsPerRow * initialRows)
       }
     }
 
@@ -80,7 +82,7 @@ export default function WorksGallery({ works, locale }: WorksGalleryProps) {
   const hasMore = itemsToShow < works.length
 
   const loadMore = () => {
-    setItemsToShow((prev) => prev + itemsPerRow * 5) // Load 5 more rows
+    setItemsToShow((prev) => prev + itemsPerRow * 3) // Load 3 more rows
   }
 
   const openModal = (index: number) => {
@@ -139,61 +141,63 @@ export default function WorksGallery({ works, locale }: WorksGalleryProps) {
 
           {/* Masonry Grid using CSS columns; center column block */}
           <div className="flex justify-center">
-            <div className="w-full max-w-5xl relative">
-              <div
-                className="w-full columns-1 sm:columns-2 lg:columns-3"
-                style={{ columnGap: '3.5rem' }}
-              >
-                {visibleWorks.map((work, index) => (
-                  <WorkCard key={work.id ?? index} work={work} onClick={() => openModal(index)} />
-                ))}
+            <div className="w-full max-w-5xl">
+              <div className="relative">
+                <div
+                  className="w-full columns-1 sm:columns-2 lg:columns-3"
+                  style={{ columnGap: '3.5rem' }}
+                >
+                  {visibleWorks.map((work, index) => (
+                    <WorkCard key={work.id ?? index} work={work} onClick={() => openModal(index)} />
+                  ))}
+                </div>
+
+                {/* Fade overlay and Load More - Medium style */}
+                {hasMore && (
+                  <>
+                    {/* Gradient fade overlay on last rows - covers half of last row */}
+                    <div
+                      className="absolute bottom-0 left-0 right-0 pointer-events-none"
+                      style={{
+                        height: '350px',
+                        background:
+                          'linear-gradient(to top, rgb(255,255,255) 0%, rgb(255,255,255) 30%, rgba(255,255,255,0.98) 50%, rgba(255,255,255,0.85) 65%, rgba(255,255,255,0.5) 80%, rgba(255,255,255,0) 100%)',
+                      }}
+                    />
+
+                    {/* Load More Section */}
+                    <div className="relative -mt-48 md:-mt-64 pt-24 md:pt-32 pb-8 flex flex-col items-center gap-4 md:gap-6">
+                      <motion.p
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="text-base md:text-lg text-black/60 font-sans text-center"
+                      >
+                        {t.discoverMore}
+                      </motion.p>
+                      <motion.button
+                        onClick={loadMore}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                        className="px-8 md:px-10 py-3 md:py-4 bg-black text-white text-xs md:text-sm font-sans uppercase tracking-[0.15em] md:tracking-[0.2em] rounded-full hover:bg-black/85 transition-all shadow-lg hover:shadow-xl"
+                      >
+                        {t.loadMore}
+                      </motion.button>
+                      <motion.span
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        className="text-sm text-black/40 font-sans"
+                      >
+                        {works.length - itemsToShow} {t.moreAvailable}
+                      </motion.span>
+                    </div>
+                  </>
+                )}
               </div>
-
-              {/* Fade overlay and Load More - Medium style */}
-              {hasMore && (
-                <>
-                  {/* Gradient fade overlay on last rows - covers half of last row */}
-                  <div
-                    className="absolute bottom-0 left-0 right-0 pointer-events-none"
-                    style={{
-                      height: '450px',
-                      background:
-                        'linear-gradient(to top, rgb(255,255,255) 0%, rgb(255,255,255) 30%, rgba(255,255,255,0.98) 50%, rgba(255,255,255,0.85) 65%, rgba(255,255,255,0.5) 80%, rgba(255,255,255,0) 100%)',
-                    }}
-                  />
-
-                  {/* Load More Section */}
-                  <div className="relative -mt-64 pt-32 pb-8 flex flex-col items-center gap-6">
-                    <motion.p
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5 }}
-                      className="text-lg text-black/60 font-sans text-center"
-                    >
-                      {t.discoverMore}
-                    </motion.p>
-                    <motion.button
-                      onClick={loadMore}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.1 }}
-                      className="px-10 py-4 bg-black text-white text-sm font-sans uppercase tracking-[0.2em] rounded-full hover:bg-black/85 transition-all shadow-lg hover:shadow-xl"
-                    >
-                      {t.loadMore}
-                    </motion.button>
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.2 }}
-                      className="text-sm text-black/40 font-sans"
-                    >
-                      {works.length - itemsToShow} {t.moreAvailable}
-                    </motion.span>
-                  </div>
-                </>
-              )}
             </div>
           </div>
         </div>
