@@ -149,7 +149,7 @@ export default function SeriesGallery({ series, locale }: SeriesGalleryProps) {
             className="mb-12 md:mb-16"
           >
             <motion.span
-              className="text-3xl font-sans uppercase tracking-[0.3em] text-black/40 font-bold"
+              className="block max-w-full text-2xl sm:text-3xl font-sans uppercase tracking-[0.2em] sm:tracking-[0.3em] text-black/40 font-bold break-words leading-tight"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}

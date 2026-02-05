@@ -18,7 +18,7 @@ export default function PressGallery({ press, locale }: Props) {
     >
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 md:mb-16">
-          <span className="text-3xl font-sans uppercase tracking-[0.3em] text-black/40 font-bold">
+          <span className="block max-w-full text-2xl sm:text-3xl font-sans uppercase tracking-[0.2em] sm:tracking-[0.3em] text-black/40 font-bold break-words leading-tight">
             {t.press}
           </span>
           <div className="w-20 h-px bg-black/20 mt-4" />
