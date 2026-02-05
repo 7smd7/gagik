@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.6
 # To use this Dockerfile, you have to set `output: 'standalone'` in your next.config.mjs file.
 # From https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 
@@ -29,17 +30,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# R2 Storage build args (needed for Next.js build)
+# Build-time secrets (avoid ENV so they don't persist into the final image)
 ARG R2_BUCKET
 ARG R2_ACCESS_KEY_ID
 ARG R2_SECRET_ACCESS_KEY
 ARG R2_ENDPOINT
 ARG R2_CUSTOM_DOMAIN
-ENV R2_BUCKET=${R2_BUCKET}
-ENV R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}
-ENV R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY}
-ENV R2_ENDPOINT=${R2_ENDPOINT}
-ENV R2_CUSTOM_DOMAIN=${R2_CUSTOM_DOMAIN}
 
 # Public environment variables (needed at build time for Next.js)
 ARG NEXT_PUBLIC_SITE_URL
@@ -57,9 +53,27 @@ ENV TURBOPACK=0
 ENV TURBOPACK=0
 
 RUN \
-  if [ -f yarn.lock ]; then yarn run build; \
-  elif [ -f package-lock.json ]; then npm run build --legacy-peer-deps; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  if [ -f yarn.lock ]; then \
+    R2_BUCKET="$R2_BUCKET" \
+    R2_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID" \
+    R2_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY" \
+    R2_ENDPOINT="$R2_ENDPOINT" \
+    R2_CUSTOM_DOMAIN="$R2_CUSTOM_DOMAIN" \
+    yarn run build; \
+  elif [ -f package-lock.json ]; then \
+    R2_BUCKET="$R2_BUCKET" \
+    R2_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID" \
+    R2_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY" \
+    R2_ENDPOINT="$R2_ENDPOINT" \
+    R2_CUSTOM_DOMAIN="$R2_CUSTOM_DOMAIN" \
+    npm run build --legacy-peer-deps; \
+  elif [ -f pnpm-lock.yaml ]; then \
+    R2_BUCKET="$R2_BUCKET" \
+    R2_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID" \
+    R2_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY" \
+    R2_ENDPOINT="$R2_ENDPOINT" \
+    R2_CUSTOM_DOMAIN="$R2_CUSTOM_DOMAIN" \
+    corepack enable pnpm && pnpm run build; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
