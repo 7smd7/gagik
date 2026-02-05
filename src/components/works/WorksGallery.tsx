@@ -53,6 +53,7 @@ export default function WorksGallery({ works, locale }: WorksGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [itemsToShow, setItemsToShow] = useState(6)
   const [itemsPerRow, setItemsPerRow] = useState(3)
+  const didInitItems = useRef(false)
   const sectionRef = useRef<HTMLElement>(null)
   const titleInView = useInView(sectionRef, { once: true, margin: '-100px' })
 
@@ -69,7 +70,15 @@ export default function WorksGallery({ works, locale }: WorksGalleryProps) {
           columnsPerRow = 2
         }
         setItemsPerRow(columnsPerRow)
-        setItemsToShow(columnsPerRow * initialRows)
+        setItemsToShow((prev) => {
+          const initialCount = columnsPerRow * initialRows
+          if (!didInitItems.current) {
+            didInitItems.current = true
+            return initialCount
+          }
+          // Avoid shrinking the list on mobile scroll (resize events).
+          return Math.max(prev, initialCount)
+        })
       }
     }
 
@@ -143,10 +152,7 @@ export default function WorksGallery({ works, locale }: WorksGalleryProps) {
           <div className="flex justify-center">
             <div className="w-full max-w-5xl">
               <div className="relative">
-                <div
-                  className="w-full columns-1 sm:columns-2 lg:columns-3"
-                  style={{ columnGap: '3.5rem' }}
-                >
+                <div className="w-full columns-1 sm:columns-2 lg:columns-3 gap-x-14">
                   {visibleWorks.map((work, index) => (
                     <WorkCard key={work.id ?? index} work={work} onClick={() => openModal(index)} />
                   ))}
@@ -156,14 +162,7 @@ export default function WorksGallery({ works, locale }: WorksGalleryProps) {
                 {hasMore && (
                   <>
                     {/* Gradient fade overlay on last rows - covers half of last row */}
-                    <div
-                      className="absolute bottom-0 left-0 right-0 pointer-events-none"
-                      style={{
-                        height: '350px',
-                        background:
-                          'linear-gradient(to top, rgb(255,255,255) 0%, rgb(255,255,255) 30%, rgba(255,255,255,0.98) 50%, rgba(255,255,255,0.85) 65%, rgba(255,255,255,0.5) 80%, rgba(255,255,255,0) 100%)',
-                      }}
-                    />
+                    <div className="absolute bottom-0 left-0 right-0 h-87.5 pointer-events-none bg-[linear-gradient(to_top,rgba(255,255,255,1)_0%,rgba(255,255,255,1)_30%,rgba(255,255,255,0.98)_50%,rgba(255,255,255,0.85)_65%,rgba(255,255,255,0.5)_80%,rgba(255,255,255,0)_100%)]" />
 
                     {/* Load More Section */}
                     <div className="relative -mt-48 md:-mt-64 pt-24 md:pt-32 pb-8 flex flex-col items-center gap-4 md:gap-6">
