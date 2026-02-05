@@ -18,9 +18,9 @@ WORKDIR /app
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm install --legacy-peer-deps; \
+  elif [ -f package-lock.json ]; then npm install --legacy-peer-deps --no-audit --no-fund; \
   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
+  else echo "Lockfile not found. Falling back to npm install." && npm install --legacy-peer-deps --no-audit --no-fund; \
   fi
 
 
@@ -57,6 +57,7 @@ ENV TURBOPACK=0
 ENV TURBOPACK=0
 
 RUN \
+  ls -la; \
   if [ -f yarn.lock ]; then \
     R2_BUCKET="$R2_BUCKET" \
     R2_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID" \
@@ -78,7 +79,7 @@ RUN \
     R2_ENDPOINT="$R2_ENDPOINT" \
     R2_CUSTOM_DOMAIN="$R2_CUSTOM_DOMAIN" \
     corepack enable pnpm && pnpm run build; \
-  else echo "Lockfile not found." && exit 1; \
+  else echo "Lockfile not found. Falling back to npm run build." && npm run build --legacy-peer-deps; \
   fi
 
 # Production image, copy all the files and run next
