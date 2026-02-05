@@ -30,10 +30,9 @@ export async function POST(request: Request) {
     const payload = await getPayload({ config })
 
     // Fetch all subscribers (optionally filter by locale)
-    const where = locale ? { locale: { equals: locale } } : {}
     const subscribers = await payload.find({
       collection: 'subscribers',
-      where,
+      where: locale ? { locale: { equals: locale } } : undefined,
       limit: 1000,
       overrideAccess: true,
     })
