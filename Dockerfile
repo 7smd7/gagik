@@ -31,6 +31,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build-time secrets (avoid ENV so they don't persist into the final image)
+ARG PAYLOAD_SECRET
 ARG R2_BUCKET
 ARG R2_ACCESS_KEY_ID
 ARG R2_SECRET_ACCESS_KEY
@@ -40,6 +41,9 @@ ARG R2_CUSTOM_DOMAIN
 # Public environment variables (needed at build time for Next.js)
 ARG NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+
+# Payload config validation requires a secret during build
+ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
 
 # Disable Turbopack for production builds (Payload compatibility)
 ENV TURBOPACK=0
