@@ -30,6 +30,16 @@ export const ru: Translations = {
   by: 'автор',
   online: 'Онлайн',
 
+  // Contact
+  contact: 'Контакты',
+  contactSubtitle: 'Будьте в курсе',
+  contactDescription: 'Подпишитесь, чтобы получать обновления и новые работы.',
+  emailPlaceholder: 'Ваш email',
+  subscribe: 'Подписаться',
+  subscribeLoading: 'Подписка…',
+  contactThanks: 'Спасибо! Вы в списке.',
+  contactError: 'Что-то пошло не так. Попробуйте снова.',
+
   // Months
   months: {
     january: 'Январь',

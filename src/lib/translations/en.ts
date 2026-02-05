@@ -28,6 +28,16 @@ export const en = {
   by: 'by',
   online: 'Online',
 
+  // Contact
+  contact: 'Contact',
+  contactSubtitle: 'Stay in the loop',
+  contactDescription: 'Subscribe to receive updates and new work releases.',
+  emailPlaceholder: 'Your email address',
+  subscribe: 'Subscribe',
+  subscribeLoading: 'Subscribing…',
+  contactThanks: 'Thanks! You are on the list.',
+  contactError: 'Something went wrong. Please try again.',
+
   // Months
   months: {
     january: 'January',

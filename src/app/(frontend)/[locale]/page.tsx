@@ -7,6 +7,7 @@ import Biography from '@/components/biography/Biography'
 import WorksGallery from '@/components/works/WorksGallery'
 import SeriesGallery from '@/components/series/SeriesGallery'
 import PressGallery from '@/components/press/PressGallery'
+import ContactSection from '@/components/contact/ContactSection'
 import ScrollSpacer from '@/components/layout/ScrollSpacer'
 import HashScroller from '@/components/layout/HashScroller'
 import type { Metadata } from 'next'
@@ -223,6 +224,11 @@ export default async function PageComponent({ params }: PageProps) {
 
       {/* Press Section */}
       {press.length > 0 && <PressGallery press={press} locale={locale} />}
+
+      <ScrollSpacer />
+
+      {/* Contact Section */}
+      <ContactSection locale={locale} />
     </div>
   )
 }

@@ -30,6 +30,16 @@ export const hy: Translations = {
   by: 'հեղինակ՝',
   online: 'Օնլայն',
 
+  // Contact
+  contact: 'Կապ',
+  contactSubtitle: 'Մնացեք կապի մեջ',
+  contactDescription: 'Բաժանորդագրվեք՝ նորությունների և նոր գործերի մասին տեղեկանալու համար։',
+  emailPlaceholder: 'Ձեր էլ․ հասցեն',
+  subscribe: 'Բաժանորդագրվել',
+  subscribeLoading: 'Բաժանորդագրում…',
+  contactThanks: 'Շնորհակալություն։ Դուք ցուցակում եք։',
+  contactError: 'Ինչ‑որ բան սխալ գնաց։ Խնդրում ենք փորձել կրկին։',
+
   // Months
   months: {
     january: 'Հունվար',

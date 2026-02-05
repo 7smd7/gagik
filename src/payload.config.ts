@@ -35,6 +35,8 @@ import { Pages } from './collections/Pages'
 import { Works } from './collections/Works'
 import { Series } from './collections/Series'
 import { Press } from './collections/Press'
+import { Subscribers } from './collections/Subscribers'
+import { Broadcasts } from './collections/Broadcasts'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { TranslationSettings } from './globals/TranslationSettings'
@@ -69,7 +71,7 @@ export default buildConfig({
     defaultLocale: 'en',
     fallback: true,
   },
-  collections: [Users, Media, Pages, Works, Series, Press],
+  collections: [Users, Media, Pages, Works, Series, Press, Subscribers, Broadcasts],
   globals: [Header, Footer, TranslationSettings, SiteSettings],
   editor: lexicalEditor(),
   email:
