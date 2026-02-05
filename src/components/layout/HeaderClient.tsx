@@ -45,14 +45,14 @@ export default function HeaderClient({ logo, name, navItems, locale = 'en' }: He
     >
       <div className="flex flex-1 justify-between p-4 md:p-6 relative max-w-full">
         {/* Logo / Name */}
-        <Link href="/" className="group flex items-center gap-2 md:gap-3 flex-shrink min-w-0">
+        <Link href="/" className="group flex items-center gap-2 md:gap-3 shrink min-w-0">
           {logo && typeof logo === 'object' && logo.url && (
             <Image
               src={logo.url}
               alt={logo.alt || 'Logo'}
               width={40}
               height={40}
-              className="h-6 w-auto md:h-8 flex-shrink-0"
+              className="h-6 w-auto md:h-8 shrink-0"
             />
           )}
           <motion.span
@@ -128,7 +128,7 @@ export default function HeaderClient({ logo, name, navItems, locale = 'en' }: He
 
         {/* Mobile Menu Button */}
         <motion.button
-          className="md:hidden text-xs font-sans uppercase tracking-[0.15em] flex-shrink-0"
+          className="md:hidden text-xs font-sans uppercase tracking-[0.15em] shrink-0"
           animate={{ color: isScrolled ? '#000000' : '#ffffff' }}
           transition={{ duration: 0.3 }}
           onClick={() => setMenuOpen((open) => !open)}
