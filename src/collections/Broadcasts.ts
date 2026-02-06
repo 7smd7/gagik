@@ -3,6 +3,18 @@ import { renderRichTextEmail } from '../lib/email/renderRichTextEmail'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gagikharutyunyan.com'
 
+// Extract domain from site URL (e.g., "https://example.com" -> "example.com")
+const getDomainFromUrl = (url: string): string => {
+  try {
+    const urlObj = new URL(url)
+    return urlObj.hostname
+  } catch {
+    return 'localhost'
+  }
+}
+
+const domain = getDomainFromUrl(siteUrl)
+
 export const Broadcasts: CollectionConfig = {
   slug: 'broadcasts',
   labels: {
@@ -20,13 +32,24 @@ export const Broadcasts: CollectionConfig = {
     update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => Boolean(req.user),
   },
+  hooks: {
+    beforeValidate: [
+      async ({ data }) => {
+        // Auto-append domain to "from" if it's just a username
+        if (data.from && !data.from.includes('@')) {
+          data.from = `${data.from}@${domain}`
+        }
+        return data
+      },
+    ],
+  },
   fields: [
     {
       name: 'from',
       type: 'email',
       required: false,
       admin: {
-        description: 'Optional. Leave empty to use RESEND_FROM (must be verified in Resend).',
+        description: `Optional. Enter just a username (e.g., "gagik") and it will auto-append @${domain}. Or enter full email. Leave empty to use RESEND_FROM.`,
       },
     },
     {
