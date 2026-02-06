@@ -36,96 +36,12 @@ export const Broadcasts: CollectionConfig = {
     beforeValidate: [
       async ({ data }) => {
         // Auto-append domain to "from" if it's just a username
-        if (data.from && !data.from.includes('@')) {
+        if (data && data.from && !data.from.includes('@')) {
           data.from = `${data.from}@${domain}`
         }
         return data
       },
     ],
-  },
-  fields: [
-    {
-      name: 'from',
-      type: 'email',
-      required: false,
-      admin: {
-        description: `Optional. Enter just a username (e.g., "gagik") and it will auto-append @${domain}. Or enter full email. Leave empty to use RESEND_FROM.`,
-      },
-    },
-    {
-      name: 'subject',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'locale',
-      type: 'select',
-      required: false,
-      options: [
-        { label: 'All', value: 'all' },
-        { label: 'English', value: 'en' },
-        { label: 'Armenian', value: 'hy' },
-        { label: 'Russian', value: 'ru' },
-      ],
-      defaultValue: 'all',
-    },
-    {
-      name: 'content',
-      type: 'richText',
-      required: true,
-    },
-    {
-      name: 'sendNow',
-      type: 'checkbox',
-      label: 'Send now',
-      defaultValue: false,
-      admin: {
-        description: 'Check and save to send this broadcast to all subscribers.',
-      },
-    },
-    {
-      name: 'status',
-      type: 'select',
-      options: [
-        { label: 'Draft', value: 'draft' },
-        { label: 'Sent', value: 'sent' },
-        { label: 'Failed', value: 'failed' },
-      ],
-      defaultValue: 'draft',
-      admin: {
-        readOnly: true,
-      },
-    },
-    {
-      name: 'sentAt',
-      type: 'date',
-      admin: {
-        readOnly: true,
-      },
-    },
-    {
-      name: 'sentCount',
-      type: 'number',
-      admin: {
-        readOnly: true,
-      },
-    },
-    {
-      name: 'failedCount',
-      type: 'number',
-      admin: {
-        readOnly: true,
-      },
-    },
-    {
-      name: 'error',
-      type: 'textarea',
-      admin: {
-        readOnly: true,
-      },
-    },
-  ],
-  hooks: {
     afterChange: [
       async ({ doc, previousDoc, req }) => {
         if (req?.context?.skipBroadcastSend) return
@@ -214,6 +130,88 @@ export const Broadcasts: CollectionConfig = {
       },
     ],
   },
+  fields: [
+    {
+      name: 'from',
+      type: 'email',
+      required: false,
+      admin: {
+        description: `Optional. Enter just a username (e.g., "gagik") and it will auto-append @${domain}. Or enter full email. Leave empty to use RESEND_FROM.`,
+      },
+    },
+    {
+      name: 'subject',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'locale',
+      type: 'select',
+      required: false,
+      options: [
+        { label: 'All', value: 'all' },
+        { label: 'English', value: 'en' },
+        { label: 'Armenian', value: 'hy' },
+        { label: 'Russian', value: 'ru' },
+      ],
+      defaultValue: 'all',
+    },
+    {
+      name: 'content',
+      type: 'richText',
+      required: true,
+    },
+    {
+      name: 'sendNow',
+      type: 'checkbox',
+      label: 'Send now',
+      defaultValue: false,
+      admin: {
+        description: 'Check and save to send this broadcast to all subscribers.',
+      },
+    },
+    {
+      name: 'status',
+      type: 'select',
+      options: [
+        { label: 'Draft', value: 'draft' },
+        { label: 'Sent', value: 'sent' },
+        { label: 'Failed', value: 'failed' },
+      ],
+      defaultValue: 'draft',
+      admin: {
+        readOnly: true,
+      },
+    },
+    {
+      name: 'sentAt',
+      type: 'date',
+      admin: {
+        readOnly: true,
+      },
+    },
+    {
+      name: 'sentCount',
+      type: 'number',
+      admin: {
+        readOnly: true,
+      },
+    },
+    {
+      name: 'failedCount',
+      type: 'number',
+      admin: {
+        readOnly: true,
+      },
+    },
+    {
+      name: 'error',
+      type: 'textarea',
+      admin: {
+        readOnly: true,
+      },
+    },
+  ],
 }
 
 export default Broadcasts
