@@ -23,6 +23,7 @@ import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { GeminiPricingLink as GeminiPricingLink_008ae3bbbd1a9e1f5bcf0d4c9105a0e4 } from '@/components/admin/PricingLink'
 import { OpenAIPricingLink as OpenAIPricingLink_008ae3bbbd1a9e1f5bcf0d4c9105a0e4 } from '@/components/admin/PricingLink'
+import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -49,5 +50,6 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/components/admin/PricingLink#GeminiPricingLink": GeminiPricingLink_008ae3bbbd1a9e1f5bcf0d4c9105a0e4,
-  "@/components/admin/PricingLink#OpenAIPricingLink": OpenAIPricingLink_008ae3bbbd1a9e1f5bcf0d4c9105a0e4
+  "@/components/admin/PricingLink#OpenAIPricingLink": OpenAIPricingLink_008ae3bbbd1a9e1f5bcf0d4c9105a0e4,
+  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
