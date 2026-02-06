@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { renderRichTextEmail } from '@/lib/email/renderRichTextEmail'
+import { renderRichTextEmail } from '../lib/email/renderRichTextEmail'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gagikharutyunyan.com'
 
